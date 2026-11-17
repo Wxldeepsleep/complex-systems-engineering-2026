@@ -39,6 +39,8 @@ code,.mono{font-family:"SF Mono",Consolas,"Roboto Mono",monospace}
 .nav-links a{font-size:13px;color:var(--ink-soft);text-decoration:none;padding:6px 10px;border-radius:6px}
 .nav-links a:hover{background:var(--paper);color:var(--ink)}
 .nav-links a.active{color:var(--accent);background:var(--accent-soft);font-weight:600}
+.nav-links a.assignment{color:var(--navy);border:1px solid var(--line);font-weight:600}
+.nav-links a.assignment:hover{background:var(--navy);color:#fff}
 
 /* ===== Hero ===== */
 .hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
@@ -48,6 +50,15 @@ code,.mono{font-family:"SF Mono",Consolas,"Roboto Mono",monospace}
 .hero .sub{margin-top:16px;font-size:16px;color:var(--ink-soft);max-width:640px}
 .hero-meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}
 .hero-meta .tag{font-size:12.5px;color:var(--muted);border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px}
+
+/* 作业入口卡片 */
+.assign-grid{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.assign-card{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;transition:border-color .15s,box-shadow .15s}
+.assign-card:hover{border-color:var(--accent);box-shadow:0 6px 18px rgba(35,50,68,.10)}
+.assign-card .ac-tag{font-size:11.5px;font-family:"SF Mono",Consolas,monospace;color:var(--muted);letter-spacing:.05em}
+.assign-card h3{font-size:16px;font-weight:700;color:var(--navy);margin:6px 0 4px}
+.assign-card p{font-size:13px;color:var(--ink-soft)}
+.assign-card .ac-link{margin-top:10px;font-size:13px;font-weight:600;color:var(--accent)}
 
 /* ===== 六层链条 ===== */
 .chain{margin-top:36px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
@@ -125,6 +136,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
   .chain .step::after{display:none}
   .grid.g4{grid-template-columns:repeat(2,1fr)}
   .grid.g3{grid-template-columns:repeat(2,1fr)}
+  .assign-grid{grid-template-columns:1fr}
 }
 @media (max-width:560px){
   .chain{grid-template-columns:repeat(2,1fr)}
@@ -151,6 +163,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
       <a href="#subsystems">子系统</a>
       <a href="#modules">模块</a>
       <a href="#summary">总览</a>
+      <a class="assignment" href="assignment2.html">作业2 · BRS/StRS</a>
     </div>
   </div>
 </nav>
@@ -165,6 +178,21 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
       <span class="tag">分析对象：线控底盘系统（Systems 层）</span>
       <span class="tag">控制自由度：纵向 / 横向 / 垂向</span>
       <span class="tag">课程：复杂系统工程 · 2026</span>
+    </div>
+
+    <div class="assign-grid">
+      <a class="assign-card" href="index.html">
+        <div class="ac-tag">作业 1 · 分层分解分析</div>
+        <h3>线控底盘六层框架分析</h3>
+        <p>任务—体系—整机—系统—子系统—模块 的层级串联与关键结论。</p>
+        <div class="ac-link">查看本页 ↓</div>
+      </a>
+      <a class="assign-card" href="assignment2.html">
+        <div class="ac-tag">作业 2 · 概念定义</div>
+        <h3>BRS 与 StRS 需求规格说明</h3>
+        <p>业务/任务分析、ConOps、OpsCon、相关方列表与相关方需求。</p>
+        <div class="ac-link">进入作业2 →</div>
+      </a>
     </div>
 
     <div class="chain" aria-label="六层分解链条">
