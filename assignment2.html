@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>面向高阶智能驾驶的线控底盘系统 · BRS 与 StRS 概念定义</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23123a5c'/%3E%3Cpath d='M7 15l3.5-6h3L17 15' stroke='%23e8a33d' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='9' cy='16' r='1.6' fill='none' stroke='white' stroke-width='1.5'/%3E%3Ccircle cx='15' cy='16' r='1.6' fill='none' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap">
+<style>
+:root{
+  --ink:#16202a;
+  --ink-soft:#3c4a57;
+  --paper:#f4f6f8;
+  --card:#ffffff;
+  --line:#d9e1e8;
+  --navy:#123a5c;
+  --navy-2:#1d557f;
+  --steel:#2f6f8f;
+  --amber:#e8a33d;
+  --amber-soft:#fbeed7;
+  --teal:#2e8b7f;
+  --teal-soft:#e2f1ee;
+  --red:#b4463a;
+  --red-soft:#f7e7e4;
+  --bg:#eef2f5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.75;font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+/* ===== 封面 ===== */
+header.hero{
+  background:linear-gradient(155deg,#0f2f49 0%,#123a5c 46%,#1d557f 100%);
+  color:#f3f7fa;padding:64px 0 52px;position:relative;overflow:hidden;
+}
+header.hero::before{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 80% at 70% 20%,#000 30%,transparent 75%);
+}
+.hero-inner{position:relative;z-index:1}
+.hero .kicker{
+  display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.18em;
+  color:var(--amber);text-transform:uppercase;font-weight:600;margin-bottom:22px;
+}
+.hero .kicker::before{content:"";width:34px;height:1px;background:var(--amber)}
+.hero h1{
+  font-family:"Noto Serif SC",serif;font-weight:900;font-size:38px;line-height:1.3;
+  max-width:820px;margin-bottom:18px;
+}
+.hero p.lead{font-size:16px;color:#cddce6;max-width:720px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.hero-meta .chip{
+  border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 16px;
+  font-size:13px;color:#dbe7ee;background:rgba(255,255,255,.05);
+}
+.hero-meta .chip b{color:#fff;font-weight:600}
+
+/* ===== 导航 ===== */
+nav.toc{
+  position:sticky;top:0;z-index:30;background:rgba(238,242,245,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 28px}
+nav.toc a{
+  white-space:nowrap;text-decoration:none;color:var(--ink-soft);font-size:13.5px;
+  padding:7px 13px;border-radius:7px;font-weight:500;
+}
+nav.toc a:hover{background:var(--navy);color:#fff}
+
+/* ===== 章节 ===== */
+section{padding:46px 0 8px}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+.sec-num{
+  font-family:"Noto Serif SC",serif;font-weight:900;font-size:15px;color:#fff;
+  background:var(--navy);border-radius:8px;padding:4px 12px;flex:none;
+}
+.sec-head h2{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:700;color:var(--navy)}
+.sec-sub{color:var(--ink-soft);font-size:14px;margin:6px 0 26px;padding-left:2px}
+
+/* 框架对照条 */
+.framework-bar{
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0 30px;
+}
+.fb{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:var(--card)}
+.fb.brs{border-top:3px solid var(--navy)}
+.fb.strs{border-top:3px solid var(--teal)}
+.fb h3{font-size:16px;margin-bottom:6px}
+.fb.brs h3{color:var(--navy)}
+.fb.strs h3{color:var(--teal)}
+.fb p{font-size:13.5px;color:var(--ink-soft)}
+
+/* 卡片 */
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:24px 26px;margin-bottom:18px;
+}
+.card h4{
+  font-size:16px;font-weight:600;color:var(--navy);margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.card h4 .tag{
+  font-size:11.5px;font-weight:500;color:var(--steel);background:#e7f0f5;
+  border-radius:5px;padding:2px 8px;letter-spacing:.04em;
+}
+.card p{margin-bottom:10px;color:var(--ink-soft)}
+.card ul{padding-left:20px;color:var(--ink-soft)}
+.card ul li{margin-bottom:7px}
+.card ul li b{color:var(--ink)}
+
+/* 编号小节（对应标准条款） */
+.clause{margin-bottom:22px}
+.clause > .cl-title{
+  font-size:15px;font-weight:600;color:var(--ink);margin-bottom:10px;
+  padding-left:12px;border-left:3px solid var(--amber);
+}
+.clause > .cl-title .code{color:var(--steel);font-weight:500;font-size:13px;margin-right:8px}
+
+/* 表格 */
+.table-box{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;table-layout:fixed}
+col.c-id{width:9%}col.c-name{width:19%}col.c-type{width:15%}col.c-int{width:34%}col.c-need{width:23%}
+th,td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:var(--navy);color:#fff;font-weight:500;font-size:13px}
+tr:last-child td{border-bottom:none}
+td .pill{display:inline-block;font-size:11.5px;border-radius:5px;padding:1px 8px;margin-bottom:3px}
+.pill.direct{background:var(--amber-soft);color:#9a6a17}
+.pill.inter{background:#e7f0f5;color:var(--steel)}
+.pill.influ{background:var(--red-soft);color:var(--red)}
+td small{color:var(--ink-soft)}
+
+/* 需求条目 */
+.req-list{display:grid;gap:12px}
+.req{
+  border:1px solid var(--line);border-radius:11px;padding:15px 17px;background:#fcfdfe;
+}
+.req .req-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:5px}
+.req .rid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--steel);font-weight:600}
+.req .rpri{font-size:11px;border-radius:5px;padding:1px 8px}
+.rpri.h{background:var(--red-soft);color:var(--red)}
+.rpri.m{background:var(--amber-soft);color:#9a6a17}
+.rpri.l{background:#eef2f5;color:var(--ink-soft)}
+.req .rtext{font-size:14px;color:var(--ink)}
+.req .rwhy{font-size:12.5px;color:var(--ink-soft);margin-top:4px}
+.req .rwhy::before{content:"依据：";color:var(--steel)}
+
+/* ConOps / OpsCon 双栏 */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.conops{border-top:3px solid var(--navy-2)}
+.opscon{border-top:3px solid var(--teal)}
+
+/* 运行阶段时间轴 */
+.stages{display:grid;gap:0;margin-top:8px}
+.stage{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:16px 0;border-bottom:1px dashed var(--line)}
+.stage:last-child{border-bottom:none}
+.stage .st-name{font-weight:600;color:var(--navy);font-size:14.5px}
+.stage .st-name small{display:block;color:var(--ink-soft);font-weight:400;font-size:12px;margin-top:2px}
+.stage .st-body{color:var(--ink-soft);font-size:13.5px}
+.stage .st-body b{color:var(--ink)}
+
+/* 场景卡 */
+.scene-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.scene{border:1px solid var(--line);border-radius:12px;padding:18px;background:#fcfdfe}
+.scene h5{font-size:14px;color:var(--navy);margin-bottom:8px}
+.scene p{font-size:13px;color:var(--ink-soft)}
+.scene .act{margin-top:8px;font-size:12.5px;color:var(--steel)}
+
+/* 五类交互要素 */
+.elements{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:10px}
+.el{border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center;background:#fff}
+.el .el-ic{font-size:12px;font-weight:700;color:var(--amber);letter-spacing:.08em;margin-bottom:6px}
+.el p{font-size:12.5px;color:var(--ink-soft)}
+
+/* 边界示意 */
+.boundary{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.bnd{padding:20px;font-size:13px}
+.bnd.outer{background:#f2f6f9}
+.bnd.core{background:var(--navy);color:#fff}
+.bnd.core h5{color:var(--amber);margin-bottom:8px;font-size:15px}
+.bnd h5{font-size:13.5px;margin-bottom:8px;color:var(--navy)}
+.bnd ul{padding-left:16px;color:var(--ink-soft)}
+.bnd.core ul{color:#dce8f0}
+.bnd ul li{margin-bottom:6px}
+
+/* 指标 */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:18px;background:#fff}
+.kpi .v{font-family:"Noto Serif SC",serif;font-size:22px;font-weight:700;color:var(--navy)}
+.kpi .k{font-size:12.5px;color:var(--ink-soft);margin-top:3px}
+.kpi .kty{font-size:12.5px;color:var(--ink-soft);margin-top:3px}
+
+footer{margin-top:50px;background:var(--navy);color:#cddce6;padding:30px 0;font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer b{color:#fff}
+
+.note{font-size:12.5px;color:var(--ink-soft);background:var(--paper);border-radius:9px;padding:11px 14px;margin-top:12px}
+
+@media (max-width:860px){
+  .framework-bar,.duo,.scene-grid{grid-template-columns:1fr}
+  .elements{grid-template-columns:repeat(2,1fr)}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .boundary{grid-template-columns:1fr}
+  .stage{grid-template-columns:1fr;gap:6px}
+  .hero h1{font-size:28px}
+  col.c-int{width:30%}
+}
+@media print{
+  nav.toc{display:none}
+  body{background:#fff}
+  .card,.fb,.scene,.req{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 封面 ============ -->
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="kicker">小组作业 2 · 系统工程概念定义</div>
+    <h1>面向高阶智能驾驶的线控底盘系统<br>业务需求规格说明（BRS）与相关方需求规格说明（StRS）</h1>
+    <p class="lead">围绕所选系统“线控底盘系统”，依据 ISO/IEC/IEEE 29148:2018 需求工程框架（参考资料表 4-1、表 4-5），完成业务/任务分析、相关方需求分析及定义，输出 ConOps、OpsCon、相关方列表与相关方需求。</p>
+    <div class="hero-meta">
+      <div class="chip">系统对象（SoI）：<b>高阶智驾线控底盘系统</b></div>
+      <div class="chip">标准依据：<b>ISO/IEC/IEEE 15288 · 29148</b></div>
+      <div class="chip">交付形式：<b>HTML 网页</b></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 导航 ============ -->
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">概述与系统边界</a>
+    <a href="#brs">BRS 业务需求规格说明</a>
+    <a href="#conops">运营概念 ConOps</a>
+    <a href="#strs">StRS 相关方需求规格说明</a>
+    <a href="#opscon">运行概念 OpsCon</a>
+    <a href="#stakeholders">相关方列表</a>
+    <a href="#stakeholder-req">相关方需求</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ 0 概述 ============ -->
+<section id="overview">
+  <div class="sec-head"><span class="sec-num">00</span><h2>概述与系统边界</h2></div>
+  <p class="sec-sub">先界定“为什么做、做什么、不做什么”，为后续 BRS（业务管理层面）与 StRS（业务运行层面）提供共同上下文。</p>
+
+  <div class="framework-bar">
+    <div class="fb brs">
+      <h3>BRS · 业务需求规格说明（表 4-1）</h3>
+      <p>站在组织/业务管理层视角，描述企业为什么要开发线控底盘、业务环境与目标、业务模型、初步运行概念与项目约束。回答“项目要实现什么、用什么指标衡量成功”。</p>
+    </div>
+    <div class="fb strs">
+      <h3>StRS · 相关方需求规格说明（表 4-5）</h3>
+      <p>站在业务运行/用户视角，从使用者、操作者、维护者及各类交互方立场，定义使用流程、运行模式、用户需求、详细生存周期概念与相关方需求条目。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>系统定义 <span class="tag">System of Interest</span></h4>
+    <p><b>面向高阶智能驾驶的线控底盘系统</b>，是在传统底盘机械连接（转向柱、液压/真空制动、机械节气门）基础上，以“电信号传递控制指令、分布式执行器独立驱动”为核心，集成<b>线控转向（SBW）、线控制动（BBW）、线控驱动（含电驱动/电油门协调）、悬架与车身姿态控制</b>等子系统，并与智驾域控制器（ADC/ADU）、整车电子电气架构深度耦合的底盘执行层系统。</p>
+    <p>其本质是高阶智能驾驶（L2+ 至 L4 分级）的“最后一公里执行机构”：上层智驾算法给出纵向加减速、横向转角与车身稳定性目标，线控底盘将其实时、精确、安全地转化为车轮与路面的力与运动。</p>
+  </div>
+
+  <div class="boundary">
+    <div class="bnd outer">
+      <h5>外部环境 / 互操作系统</h5>
+      <ul>
+        <li>智驾域控制器（感知—决策）</li>
+        <li>整车控制器 VCU、动力域</li>
+        <li>高压电源与电池管理 BMS</li>
+        <li>整车信息娱乐 / HMI 仪表</li>
+        <li>车云后台、OTA 与诊断系统</li>
+      </ul>
+    </div>
+    <div class="bnd core">
+      <h5>线控底盘系统（SoI）</h5>
+      <ul>
+        <li>线控转向子系统 SBW（转向执行、路感反馈、冗余）</li>
+        <li>线控制动子系统 BBW（制动执行、驻车、冗余备份）</li>
+        <li>线控驱动/协调子系统（扭矩响应、驱动防滑）</li>
+        <li>悬架与姿态控制子系统（CDC/空气悬架协调）</li>
+        <li>底盘域控制器（信号融合、整车动力学协调、冗余监控）</li>
+      </ul>
+    </div>
+    <div class="bnd outer">
+      <h5>外部物理环境</h5>
+      <ul>
+        <li>道路与路面附着条件（干/湿/滑/冰雪/颠簸）</li>
+        <li>交通参与者与交通信号</li>
+        <li>环境温度、振动、电磁干扰</li>
+        <li>车辆载荷、轮胎状态与老化</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note">边界说明：感知与决策算法（摄像头、雷达、规控模型）属于智驾域，不在本系统内部；本系统只对“控制指令的接收—解析—协调—执行—状态反馈”负责。制动/转向的机械备份与失效降级策略属于本系统必须考虑的运行与安全约束。</div>
+</section>
+
+<!-- ============ BRS ============ -->
+<section id="brs">
+  <div class="sec-head"><span class="sec-num">01</span><h2>BRS · 业务需求规格说明</h2></div>
+  <p class="sec-sub">对应参考资料表 4-1《ISO/IEC/IEEE 29148:2018 标准中的 BRS 范例轮廓》，按其条款逐项展开。</p>
+
+  <!-- 1 简介 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.1</span>业务目的</div>
+      <p>在汽车智能化、电动化转型背景下，传统液压/机械底盘无法满足高阶智能驾驶对<b>快速响应、精确可控、冗余安全与整车动力学协同</b>的要求。企业启动线控底盘项目，目的是：</p>
+      <ul>
+        <li><b>支撑高阶智驾落地：</b>为 L2+ 至 L4 级自动驾驶提供可由算法直接控制的转向、制动、驱动执行接口，使上层决策能够闭环控制车辆运动。</li>
+        <li><b>提升产品竞争力与技术自主可控：</b>掌握线控底盘核心执行与控制技术，缩小与国际标杆在底盘电动化、智能化上的差距，支撑新车型平台溢价。</li>
+        <li><b>改善驾乘安全与体验：</b>通过主动稳定、冗余备份与失效降级，降低事故风险；通过平顺、线性的执行响应提升舒适性与路感一致性。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.2</span>业务范围</div>
+      <ul>
+        <li><b>业务域：</b>智能电动汽车底盘电动化与智能化，覆盖线控转向、线控制动、驱动协调、悬架姿态协调及底盘域控制。</li>
+        <li><b>在范围内：</b>底盘域控制器软硬件、各线控执行器及冗余单元、与智驾域/动力域/电源域的接口定义、台架与整车标定验证、量产装车与售后保障。</li>
+        <li><b>范围以外：</b>感知传感器、自动驾驶规控算法本体、车身内外饰、轮胎与整车总布置；上述由其他系统/部门负责，本系统通过接口与其协同。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.3</span>业务概况</div>
+      <p>底盘是连接“车辆决策”与“路面力/运动”的执行层。内部分块为转向、制动、驱动协调、悬架姿态四个执行子系统与一个底盘域控制器；外部与智驾域、动力域、电源域、HMI、车云/诊断系统交互。各子系统通过车载总线（CAN/CAN FD/车载以太网）交换信号与数据，由底盘域控制器完成动力学协调与安全监控。</p>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.4</span>定义</div>
+      <ul>
+        <li><b>线控（X-by-Wire）：</b>以电信号代替机械/液压硬连接传递控制指令，由独立布置的执行器完成转向、制动等动作。</li>
+        <li><b>SBW / BBW：</b>线控转向 / 线控制动。</li>
+        <li><b>冗余与降级：</b>主通路失效后由备份通路维持基本可控；降级指在部分功能受限条件下保证安全行驶。</li>
+        <li><b>SoI：</b>系统所关注对象，即本线控底盘系统。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.5</span>主要相关方</div>
+      <p>业务管理层面识别的主要相关方：整车制造企业（投资方/采办方）、智驾与整车研发团队、底盘供应商与执行器厂商、行业主管与法规标准机构、最终用户与车主；详细分类与清单见后文“相关方列表”。</p>
+    </div>
+  </div>
+
+  <!-- 2 参考文献 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">2</span>参考文献</div>
+      <ul>
+        <li>ISO/IEC/IEEE 15288:2023《系统与软件工程—系统生存周期过程》</li>
+        <li>ISO/IEC/IEEE 29148:2018《系统与软件工程—生存周期过程—需求工程》</li>
+        <li>郭宝柱《系统工程：基于国际标准过程的研究与实践》第 4 章 概念定义（表 4-1、表 4-5）</li>
+        <li>GB 汽车强制性标准、GB/T 智能驾驶与线控底盘相关行业标准、功能安全 ISO 26262 与预期功能安全 ISO 21448 相关要求</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3 业务管理需求 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">3.1</span>业务环境</div>
+      <ul>
+        <li><b>政策法规：</b>智能网联汽车准入与上路管理日趋规范；功能安全、预期功能安全、信息安全与网络安全成为强制约束；线控转向/制动需满足法规对转向失效、制动失效的安全冗余要求。</li>
+        <li><b>市场趋势：</b>高阶智驾渗透率快速提升，用户对自动泊车、高速/城市领航、主动安全的接受度提高；竞品普遍布局线控底盘平台。</li>
+        <li><b>技术基础：</b>电动化提供了电机、高压电源与分布式电控基础；车载以太网、域集中架构为底盘集成提供条件；同时供应链在执行器、芯片、冗余件上存在自主可控压力。</li>
+        <li><b>社会与责任：</b>底盘直接关系行车安全，事故责任与品牌声誉高度相关；需考虑噪声、振动、电磁辐射对乘员与环境的影响。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">3.2</span>使命、目的与目标</div>
+      <p>系统通过接受上层智驾或驾驶员指令，实时生成并执行车辆纵向、横向及姿态控制，达成以下业务结果：</p>
+      <ul>
+        <li><b>使命：</b>成为高阶智能驾驶可信赖的执行底座，保障车辆在各类道路与工况下可控、安全、平顺地行驶。</li>
+        <li><b>目的：</b>把决策层的运动目标稳定、精确地落到车轮与路面；在正常与失效工况下维持车辆可控。</li>
+        <li><b>可衡量目标（业务级）：</b>支撑车型达到既定智驾等级；关键执行响应与控制精度满足平台指标；量产装车并通过法规与安全认证；售后故障率与召回风险控制在企业质量目标内。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">3.3</span>业务模型</div>
+      <ul>
+        <li><b>产品形态：</b>面向企业自有及合作车型平台，提供成套线控底盘系统（域控制器 + 转向/制动/驱动/悬架执行器）及标定、配套与售后。</li>
+        <li><b>供应与合作：</b>整车厂主导系统集成与定义；执行器、传感器、芯片等由一级供应商配套，关键件需有备选来源以保障供应链安全。</li>
+        <li><b>盈利与价值模式：</b>以平台化底盘方案支撑高端智驾车型销售溢价；通过后续 OTA、标定迭代与售后维护持续创造价值。</li>
+        <li><b>地域分布：</b>研发、标定与测试围绕整车研发布局，量产装配随整车制造基地落地，售后覆盖主要销售区域。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">3.4</span>信息环境</div>
+      <ul>
+        <li><b>项目组合：</b>线控底盘需与同平台智驾项目、电子电气架构项目统筹优先级与接口，避免多项目重复定义接口。</li>
+        <li><b>长期系统计划：</b>域集中—中央计算架构演进路线作为设计约束，底盘域控制器需预留接口与算力冗余，支持向区域控制器演进。</li>
+        <li><b>数据配置：</b>统一底盘信号字典、标定数据与故障诊断数据的组织规则，明确数据可用性、可访问性与安全保密约束。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4 业务运行需求 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.1</span>业务过程</div>
+      <p>底盘支撑的核心业务活动按层次分解为：</p>
+      <ul>
+        <li><b>P1 指令接收：</b>接收来自智驾域（自动驾驶目标）或驾驶员（转向/制动/油门操作）的控制意图。</li>
+        <li><b>P2 协调决策：</b>底盘域控制器融合各执行子系统状态、车辆动力学与路面附着条件，分配转向、制动、驱动与悬架控制量。</li>
+        <li><b>P3 执行输出：</b>各线控执行器独立驱动车轮转向、制动减速、扭矩输出与姿态调节。</li>
+        <li><b>P4 状态反馈与监控：</b>采集执行器状态、轮速/转角/压力等信号，回传整车与智驾域；持续监控安全与冗余状态。</li>
+        <li><b>P5 失效应对：</b>检测主通路异常后切换备份通路或进入安全降级，并向仪表/后台告警。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.2</span>业务运营策略与规则</div>
+      <ul>
+        <li><b>控制优先级规则：</b>安全相关操作优先于舒适性与节能优化；驾驶员应急操作在规则允许范围内优先于自动控制（具体接管策略由整车 HMI 与法规确定）。</li>
+        <li><b>协调规则：</b>纵向（加减速）与横向（转向）控制需结合附着条件协调分配，避免超出轮胎附着力极限。</li>
+        <li><b>安全规则：</b>任何控制输出必须经过状态监控与合理性校验；关键子系统必须具备冗余或降级路径。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.3</span>业务运行约束</div>
+      <ul>
+        <li><b>性能时序约束：</b>控制指令须在整车动力学允许的时间窗内完成响应；关键安全链路时延满足平台与法规指标。</li>
+        <li><b>环境约束：</b>在规定温度、湿度、振动、电压范围与电磁环境内可靠工作；超出边界时按降级策略处理。</li>
+        <li><b>可追溯约束：</b>关键控制动作、故障事件与标定版本须被记录并可追溯，支持诊断与责任界定。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.4</span>业务运行质量</div>
+      <ul>
+        <li><b>可用性与可靠性：</b>关键行驶功能可用率高，平均无故障时间达到企业质量目标；安全相关功能按功能安全等级设计。</li>
+        <li><b>使用质量：</b>在效能（按目标轨迹/车速完成控制）、效率（响应及时、能量利用合理）、满意度（平顺、路感自然）与使用风险（避免误动作、误告警）上满足平台体验要求。</li>
+      </ul>
+    </div>
+
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.5</span>业务结构</div>
+      <ul>
+        <li><b>组织结构：</b>整车厂下设底盘系统工程、智驾集成、标定测试、质量与售后部门；供应商侧设执行器研发、供货与现场技术支持团队。</li>
+        <li><b>角色职责：</b>系统工程师负责需求与架构；控制/硬件/软件工程师负责实现；标定与测试人员负责验证；售后负责维修与故障反馈。</li>
+        <li><b>资源共享：</b>台架、仿真环境、试验场地与诊断工具在项目与车型间共享复用。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5 提案系统初步运行概念 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">5.1</span>初步运行概念</div>
+      <ul>
+        <li><b>运营政策与约束：</b>系统服务于整车高阶智驾与安全行驶目标；设计与运行须遵守法规、功能安全与信息安全约束。</li>
+        <li><b>系统描述：</b>以底盘域控制器为协调核心，线控转向、制动、驱动、悬架执行器分布式布置，接收指令并闭环控制车辆运动。</li>
+        <li><b>运行模式：</b>驾驶员手动模式、自动驾驶（领航/泊车等）模式、混合接管模式、冗余降级模式。</li>
+        <li><b>用户类型与相关人员：</b>驾驶员/车主、智驾系统（自动控制方）、售后维修人员、标定测试人员。</li>
+        <li><b>支持环境：</b>车载供电与总线环境、诊断与 OTA 后台、维修工具与备件体系。</li>
+      </ul>
+    </div>
+    <div class="clause">
+      <div class="cl-title"><span class="code">5.2</span>初步运行场景</div>
+      <ul>
+        <li><b>场景 S-01 高速领航巡航：</b>智驾域给出车速与换道转向目标，底盘协调加速、转向与制动，保持车道与车距。</li>
+        <li><b>场景 S-02 城市道路跟停与起步：</b>在拥堵路况下完成纵向跟车、停车保持与平顺起步。</li>
+        <li><b>场景 S-03 自动泊车：</b>低速大转角转向与精确制动配合，完成泊入/泊出。</li>
+        <li><b>场景 S-04 紧急避障与制动：</b>触发主动安全时执行快速制动与稳定性控制。</li>
+        <li><b>场景 S-05 主通路失效降级：</b>某执行或电控通路异常时切换备份，维持安全可控并告警。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6 其他初步生存周期概念 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">6</span>其他初步生存周期概念</div>
+      <ul>
+        <li><b>采办：</b>整车厂定义系统需求与平台指标，向执行器/控制器供应商采购配套件，通过定点、开发与验收流程集成。</li>
+        <li><b>部署：</b>随整车总装下线，完成控制器标定写入、总线配置与下线检测。</li>
+        <li><b>支持：</b>通过诊断接口、售后备件、维修规程与 OTA 升级保障服役期内可用。</li>
+        <li><b>弃置：</b>车辆报废后，控制器、执行器与电气件按法规回收拆解，含贵金属与可复用件的分类处置。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 7 项目约束 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">7</span>项目约束</div>
+      <ul>
+        <li><b>成本：</b>系统 BOM 成本与开发投入须落在车型平台预算内，冗余件方案需在安全与成本间权衡。</li>
+        <li><b>进度：</b>需匹配车型开发节点与量产上市时间，关键件定点与验证节点前置。</li>
+        <li><b>技术成熟度：</b>在给定时间窗内采用成熟度可控的技术与供应链方案，预留演进空间。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 8 附录 -->
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">8.1</span>缩写与缩略语</div>
+      <ul>
+        <li>BRS：业务需求规格说明（Business Requirements Specification）</li>
+        <li>StRS：相关方需求规格说明（Stakeholder Requirements Specification）</li>
+        <li>ConOps：运营概念（Concept of Operations）；OpsCon：运行概念（Operational Concept）</li>
+        <li>SBW / BBW：线控转向 / 线控制动；ADC/ADU：智驾域控制器；VCU：整车控制器；BMS：电池管理系统；HMI：人机界面；OTA：在线升级。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ConOps ============ -->
+<section id="conops">
+  <div class="sec-head"><span class="sec-num">02</span><h2>运营概念 ConOps（组织层面）</h2></div>
+  <p class="sec-sub">ConOps 在组织/体系层面描述企业预期如何运作、目的与目标，以及体系内各系统（整车、智驾、底盘、动力等）如何协同；是多对多的体系关系，而非单一系统内部设计。</p>
+
+  <div class="duo">
+    <div class="card conops">
+      <h4>目标、目的与期望</h4>
+      <ul>
+        <li><b>目标：</b>在企业智能电动汽车产品体系中，建成可复用的线控底盘平台，支撑多车型高阶智驾。</li>
+        <li><b>目的：</b>把车辆运动控制能力从“机械/液压执行”升级为“电信号驱动、可被算法闭环控制、具备冗余安全”的执行底座。</li>
+        <li><b>期望：</b>底盘与智驾、动力、电气架构协同演进；平台化复用降低后续车型开发成本；安全与体验达到同级标杆水平。</li>
+      </ul>
+    </div>
+    <div class="card conops">
+      <h4>项目范围与相关方职责</h4>
+      <ul>
+        <li><b>范围：</b>线控底盘系统的定义、开发、集成、验证、装车与售后支持；不含感知决策算法与车身工程。</li>
+        <li><b>职责划分：</b>整车厂负责系统定义、集成与验收；底盘团队负责系统架构与控制策略；供应商负责配套件交付；法规机构监督准入安全；用户提出使用与体验诉求。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>体系将如何运行 <span class="tag">多对多协同</span></h4>
+    <p>在整车体系中，交通环境与车辆状态由感知系统采集，智驾域完成决策并输出运动目标；线控底盘作为执行体系的一环，与动力域、电源域、车身系统协同完成车辆运动；整车状态与故障信息回传车云，支撑 OTA、诊断与质量改进。ConOps 关注的是这些系统组合如何共同支撑“安全、高效、舒适地把乘员从出发地送到目的地”这一业务使命，线控底盘只是其中可被独立定义的一个系统。</p>
+    <div class="elements">
+      <div class="el"><div class="el-ic">信号</div><p>转角、轮速、压力、姿态等传感信号与控制指令</p></div>
+      <div class="el"><div class="el-ic">数据</div><p>标定数据、故障码、车辆状态与版本信息</p></div>
+      <div class="el"><div class="el-ic">物质</div><p>制动液/储能件、执行器机械结构与连接件</p></div>
+      <div class="el"><div class="el-ic">能量</div><p>高压/低压电能转化为转向、制动、驱动机械能</p></div>
+      <div class="el"><div class="el-ic">活动</div><p>驾驶员操作、系统执行动作、维修与标定活动</p></div>
+    </div>
+    <div class="note">ConOps 与 OpsCon 区分：ConOps 是组织/体系层面“领导想要如何运作业务”的全局意图；OpsCon 是随后在系统层面，针对线控底盘这一特定系统描述“它将做什么、为什么做”。</div>
+  </div>
+</section>
+
+<!-- ============ StRS ============ -->
+<section id="strs">
+  <div class="sec-head"><span class="sec-num">03</span><h2>StRS · 相关方需求规格说明</h2></div>
+  <p class="sec-sub">对应参考资料表 4-5《ISO/IEC/IEEE 29148:2018 标准中的 StRS 范例轮廓》，从业务运行与相关方视角展开。</p>
+
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.1</span>相关方目的</div>
+      <p>各相关方希望通过该线控底盘系统：在安全可控前提下获得自动驾驶与主动安全能力；获得平顺、自然的驾乘体验；并使开发、制造、维护与监管活动具备清晰、可追溯、可验证的依据。</p>
+    </div>
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.2</span>相关方范围</div>
+      <p>覆盖系统全生存周期中的直接使用方、交互/使能系统所有方，以及施加影响或被影响的机构与个人；范围随采办、开发、部署、运行、支持、弃置各阶段展开。</p>
+    </div>
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.3 / 1.4</span>概况与定义</div>
+      <p>概况与术语沿用 BRS 第 1.3、1.4 条；StRS 在此基础上补充运行视角的相关方诉求与使用场景。</p>
+    </div>
+    <div class="clause">
+      <div class="cl-title"><span class="code">1.5</span>相关方</div>
+      <p>完整相关方分类、利益点、态度、影响力与重要性分析见后文“相关方列表”章节。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">2</span>参考</div>
+      <p>同 BRS 第 2 条；另补充各相关方所在领域的企业标准、接口规范、维修手册模板与测试规范。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">3.1–3.4</span>业务管理需求（继承）</div>
+      <p>StRS 继承 BRS 中业务环境、使命目的与目标、业务模型与信息环境的约束，不重复展开；当相关方运行需求与业务目标冲突时，以业务安全目标与法规为最高优先级进行权衡。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.1</span>系统过程</div>
+      <p>从运行视角，底盘系统过程为：指令接收 → 状态采集 → 协调控制量分配 → 执行器驱动 → 反馈闭环 → 安全监控与降级。每个过程都需与上层智驾/驾驶员及下层执行器明确输入输出与接口。</p>
+    </div>
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.2</span>系统运行策略与规则</div>
+      <ul>
+        <li>控制输出须满足平顺性与稳定性约束，避免急打方向、突兀加减速。</li>
+        <li>自动与手动控制之间的切换须平滑、可感知、可解释，避免控制交接抖动。</li>
+        <li>故障诊断与告警规则须分级：提示、降级、停车安全处置逐级触发。</li>
+      </ul>
+    </div>
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.3</span>系统运行约束</div>
+      <ul>
+        <li>工作环境、电压、温度、振动与电磁兼容范围约束；超出范围进入保护/降级。</li>
+        <li>接口信号协议、报文格式与时序约束；与整车电气架构版本兼容。</li>
+        <li>安全与信息安全约束：关键功能防误触发，通信与诊断具备访问控制与防护。</li>
+      </ul>
+    </div>
+    <div class="clause">
+      <div class="cl-title"><span class="code">4.4</span>系统运行模式与状态</div>
+      <ul>
+        <li><b>手动驾驶模式：</b>驾驶员直接操作，底盘提供助力与稳定支持。</li>
+        <li><b>自动驾驶模式：</b>智驾域下发目标，底盘闭环执行转向、制动、驱动。</li>
+        <li><b>接管/混合模式：</b>人机权限过渡，双方指令按规则融合或切换。</li>
+        <li><b>冗余降级模式：</b>主通路失效后备份通路工作，功能受限但保持可控。</li>
+        <li><b>驻车/下电状态：</b>驻车制动保持、控制器休眠与唤醒管理。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="clause">
+      <div class="cl-title"><span class="code">5</span>用户需求</div>
+      <ul>
+        <li>驾驶操控响应跟手、方向与制动反馈自然，无虚假路感与迟滞。</li>
+        <li>自动驾驶下车辆沿目标轨迹平顺行驶，加减速与转向不突兀。</li>
+        <li>系统状态与告警清晰可读，接管请求时机合理、方式明确。</li>
+        <li>故障情况下车辆尽量维持可控，提示驾驶员采取安全措施。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OpsCon ============ -->
+<section id="opscon">
+  <div class="sec-head"><span class="sec-num">04</span><h2>运行概念 OpsCon（系统层面）</h2></div>
+  <p class="sec-sub">OpsCon 是面向用户/运营者的系统级文档，描述线控底盘“将做什么、为什么做”，包括上下文、运行环境、正常与退化运行场景及异常场景；用于派生后续系统需求，而非规定具体设计实现。</p>
+
+  <div class="card opscon">
+    <h4>系统上下文与边界 <span class="tag">导出接口需求</span></h4>
+    <p>线控底盘向上对接智驾域与驾驶员输入，向下对接各线控执行器与传感器，对外通过总线/以太网交换信号与数据；上下文环境导出系统边界、外部接口与互操作系统清单。</p>
+    <h4 style="margin-top:18px">正常与其他运行环境 <span class="tag">导出环境需求</span></h4>
+    <p>涵盖城市道路、高速公路、停车场、低附着路面、颠簸路面，以及冷热环境、高/低电压、正常与老化车辆载荷等条件；系统须在规定环境范围内保持性能，超出范围按降级策略保护。</p>
+  </div>
+
+  <div class="card">
+    <h4>运行阶段与活动分解 <span class="tag">任务剖面</span></h4>
+    <div class="stages">
+      <div class="stage">
+        <div class="st-name">上电自检<small>下电唤醒阶段</small></div>
+        <div class="st-body">控制器与执行器上电，完成自检、状态读取与冗余通路确认；<b>活动：</b>节点初始化 → 故障自检 → 状态上报 → 就绪/不可用判定。</div>
+      </div>
+      <div class="stage">
+        <div class="st-name">手动行驶<small>驾驶员控制</small></div>
+        <div class="st-body">响应方向盘、制动踏板与加速操作，提供转向助力、制动助力与稳定控制；<b>活动：</b>操作采集 → 助力/力分配 → 执行 → 路感反馈 → 稳定监控。</div>
+      </div>
+      <div class="stage">
+        <div class="st-name">自动驾驶执行<small>智驾控制</small></div>
+        <div class="st-body">接收智驾域纵向/横向目标，协调转向、制动、驱动与悬架完成轨迹跟随；<b>活动：</b>目标解析 → 附着/状态融合 → 控制量分配 → 执行闭环 → 状态回传。</div>
+      </div>
+      <div class="stage">
+        <div class="st-name">人机接管过渡<small>混合模式</small></div>
+        <div class="st-body">在自动与手动之间平滑交接，避免控制权突变；<b>活动：</b>接管请求提示 → 权限判定 → 指令融合/切换 → 平顺过渡确认。</div>
+      </div>
+      <div class="stage">
+        <div class="st-name">失效降级<small>退化运行</small></div>
+        <div class="st-body">主通路异常时切换备份或进入受限运行，保证基本可控；<b>活动：</b>异常检测 → 冗余切换 → 降级限幅 → 告警上报 → 安全靠边/停车支持。</div>
+      </div>
+      <div class="stage">
+        <div class="st-name">驻车与下电<small>结束任务</small></div>
+        <div class="st-body">保持驻车制动，完成状态存储与控制器休眠；<b>活动：</b>驻车保持 → 数据记录 → 下电时序 → 休眠/唤醒待命。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>运行场景 <span class="tag">正常 / 退化 / 异常</span></h4>
+    <div class="scene-grid">
+      <div class="scene">
+        <h5>场景 O-1 高速领航跟车变道</h5>
+        <p>智驾域输出目标车速与变道转向量，底盘协调电机驱动、转向与制动，在车流中平顺跟车并完成变道，保持车身稳定。</p>
+        <div class="act">交互：智驾域（数据/信号）、轮胎路面（能量/活动）、仪表（状态反馈）</div>
+      </div>
+      <div class="scene">
+        <h5>场景 O-2 城市拥堵跟停起步</h5>
+        <p>低速工况下频繁加减速与停车，底盘保证起步平顺、跟停不溜车，制动与驱动衔接自然。</p>
+        <div class="act">交互：驾驶员监控（活动）、BMS/动力域（能量）、轮速信号（信号）</div>
+      </div>
+      <div class="scene">
+        <h5>场景 O-3 自动泊车入位</h5>
+        <p>低速大转角反复转向，配合精确制动与低速驱动，完成泊车轨迹跟随与到位停车保持。</p>
+        <div class="act">交互：智驾域（数据）、转向/制动执行器（活动）、驻车制动（能量保持）</div>
+      </div>
+      <div class="scene">
+        <h5>场景 O-4 紧急主动制动/避障</h5>
+        <p>触发主动安全时快速建立制动压力并结合转向稳定控制，降低碰撞风险或减轻碰撞后果。</p>
+        <div class="act">交互：感知/安全系统（信号）、制动执行器（能量）、稳定性控制（活动）</div>
+      </div>
+      <div class="scene">
+        <h5>场景 O-5 低附着路面行驶</h5>
+        <p>湿滑/冰雪路面附着受限，底盘限制控制量，防止打滑与失控，维持方向可控与减速能力。</p>
+        <div class="act">交互：轮速/附着估计（信号）、驱动防滑与稳定控制（活动）</div>
+      </div>
+      <div class="scene">
+        <h5>场景 O-6 执行/电控通路失效（异常）</h5>
+        <p>某控制器或执行通路失效时，系统检测并切换备份通路；若无法维持全功能，则进入受限降级并提示驾驶员，必要时支持安全停车。</p>
+        <div class="act">交互：冗余控制器/备份执行器、仪表与车云告警（数据/活动）</div>
+      </div>
+    </div>
+    <div class="note">异常场景只描述“可能出现的异常现象与应对活动”，不在概念阶段规定具体零部件失效机理；凡历史上出现过的异常，新系统概念文档中均需有对应分析与应对策略。</div>
+  </div>
+</section>
+
+<!-- ============ 相关方列表 ============ -->
+<section id="stakeholders">
+  <div class="sec-head"><span class="sec-num">05</span><h2>相关方列表与分析</h2></div>
+  <p class="sec-sub">按三类划分：直接相关方、存在信号/数据/物质/能量/活动交互的相关方、施加影响/被影响的相关方；态度以 +2 强支持至 -1 反对度量，影响力与重要性分强/中/弱、高/中/低。</p>
+
+  <div class="table-box">
+    <table>
+      <colgroup>
+        <col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need">
+      </colgroup>
+      <thead>
+        <tr><th>编号</th><th>相关方（类）</th><th>类别</th><th>利益点 / 交互要素与影响</th><th>态度·影响力·重要性</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SH-01</td>
+          <td>驾驶员 / 最终用户（车主）</td>
+          <td><span class="pill direct">直接相关方</span></td>
+          <td>获得安全、平顺、跟手的操控与乘坐体验；通过方向盘、踏板、HMI 与系统发生活动与信号交互。</td>
+          <td>支持 +2 · 影响力中 · 重要性高</td>
+        </tr>
+        <tr>
+          <td>SH-02</td>
+          <td>整车厂 / 采办投资方</td>
+          <td><span class="pill direct">直接相关方</span></td>
+          <td>承担项目投资与车型定位，要求系统满足平台指标、成本与量产节点；对系统定义与验收有决策权。</td>
+          <td>支持 +2 · 影响力强 · 重要性高</td>
+        </tr>
+        <tr>
+          <td>SH-03</td>
+          <td>智驾域控制器 / 规控系统团队</td>
+          <td><span class="pill inter">交互系统</span></td>
+          <td>下发运动目标（数据/信号），接收底盘状态反馈；需明确控制接口、时序与边界。</td>
+          <td>支持 +1 · 影响力强 · 重要性高</td>
+        </tr>
+        <tr>
+          <td>SH-04</td>
+          <td>动力域 / VCU / BMS</td>
+          <td><span class="pill inter">交互系统</span></td>
+          <td>交换驱动扭矩、能量与电压状态（能量/信号/数据），协调驱动防滑与能量回收。</td>
+          <td>支持 +1 · 影响力中 · 重要性中</td>
+        </tr>
+        <tr>
+          <td>SH-05</td>
+          <td>底盘执行器 / 控制器供应商</td>
+          <td><span class="pill inter">使能系统</span></td>
+          <td>提供转向、制动、悬架执行器与控制器（物质/能量），按接口规范交付并配合集成标定。</td>
+          <td>支持 +1 · 影响力中 · 重要性高</td>
+        </tr>
+        <tr>
+          <td>SH-06</td>
+          <td>标定与测试团队</td>
+          <td><span class="pill inter">使能系统</span></td>
+          <td>使用台架、仿真、试验场地完成标定与验证（活动/数据）；依赖可观测接口与诊断数据。</td>
+          <td>支持 +1 · 影响力中 · 重要性中</td>
+        </tr>
+        <tr>
+          <td>SH-07</td>
+          <td>售后 / 维修服务人员</td>
+          <td><span class="pill inter">使能系统</span></td>
+          <td>进行检测、维修、备件更换与软件升级（活动/数据）；需要诊断接口、故障码与维修规程。</td>
+          <td>支持 0 · 影响力弱 · 重要性中</td>
+        </tr>
+        <tr>
+          <td>SH-08</td>
+          <td>研发工程团队（底盘系统/硬件/软件）</td>
+          <td><span class="pill influ">施加影响</span></td>
+          <td>通过技术路线、架构、成本与风险控制影响系统；负责把需求转化为实现方案。</td>
+          <td>支持 +2 · 影响力强 · 重要性高</td>
+        </tr>
+        <tr>
+          <td>SH-09</td>
+          <td>质量与安全（功能安全/SOTIF）团队</td>
+          <td><span class="pill influ">施加影响</span></td>
+          <td>提出安全完整性、冗余、失效分析与可追溯要求，对需求与设计进行评审把关。</td>
+          <td>支持 +1 · 影响力强 · 重要性高</td>
+        </tr>
+        <tr>
+          <td>SH-10</td>
+          <td>法规机构 / 标准组织</td>
+          <td><span class="pill influ">施加影响</span></td>
+          <td>通过强制性法规与标准约束转向、制动、主动安全、信息安全与准入要求。</td>
+          <td>中立 0 · 影响力强 · 重要性高</td>
+        </tr>
+        <tr>
+          <td>SH-11</td>
+          <td>车云后台 / OTA 与诊断服务商</td>
+          <td><span class="pill inter">交互系统</span></td>
+          <td>回传车辆与故障数据（数据），支持远程诊断、版本升级与质量分析；涉及数据安全。</td>
+          <td>支持 +1 · 影响力中 · 重要性中</td>
+        </tr>
+        <tr>
+          <td>SH-12</td>
+          <td>交通参与者 / 道路环境（被影响方）</td>
+          <td><span class="pill influ">被影响</span></td>
+          <td>车辆底盘动作（制动、转向、噪声）直接影响周边行人与车辆；系统须降低对外界的安全与环境负面影响。</td>
+          <td>中立 0 · 影响力弱 · 重要性中</td>
+        </tr>
+        <tr>
+          <td>SH-13</td>
+          <td>供应链与自主可控管理方</td>
+          <td><span class="pill influ">施加影响</span></td>
+          <td>通过器件可选来源、断供风险与成本约束影响方案选择；要求关键件有备选与风险预案。</td>
+          <td>支持 +1 · 影响力中 · 重要性中</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">抽象分类说明：一线装配工、单个维修技师、具体供应商工程师等被抽象为“操作人员/售后人员/供应商”等相关方类别，其诉求综合后作为该类别的需要，不逐一罗列。</div>
+</section>
+
+<!-- ============ 相关方需求 ============ -->
+<section id="stakeholder-req">
+  <div class="sec-head"><span class="sec-num">06</span><h2>相关方需求条目</h2></div>
+  <p class="sec-sub">由相关方“需要”经分析、权衡后转化为可行、可验证的需求；优先级分为高 / 中 / 低，并标注需求依据。需求为相关方视角的高层需求，后续再向下派生系统（SRS）需求。</p>
+
+  <div class="req-list">
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-01</span><span class="rpri h">高</span><span>对应：SH-01 用户 · SH-09 安全</span></div>
+      <div class="rtext">线控底盘应能在正常与规定边界工况下，稳定完成转向、制动与驱动控制，保障车辆方向可控与减速能力。</div>
+      <div class="rwhy">行车安全是最高业务目标，用户与安全团队均要求系统不丧失基本可控性。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-02</span><span class="rpri h">高</span><span>对应：SH-03 智驾域</span></div>
+      <div class="rtext">系统应提供标准化、时序明确的控制指令接收与状态反馈接口，支持智驾域下发纵向/横向目标并获取底盘执行状态。</div>
+      <div class="rwhy">智驾闭环依赖底盘可被算法控制，接口与时序不明确将导致闭环失效。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-03</span><span class="rpri h">高</span><span>对应：SH-09 安全 · SH-10 法规</span></div>
+      <div class="rtext">关键转向/制动功能应具备冗余备份或失效降级路径，在主通路失效后维持基本可控，并触发分级告警。</div>
+      <div class="rwhy">法规与功能安全要求对单一失效进行防护，避免底盘功能完全丧失。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-04</span><span class="rpri h">高</span><span>对应：SH-01 用户</span></div>
+      <div class="rtext">系统控制输出应平顺、线性，避免突兀加减速与急打方向；自动/手动切换过程应平滑、可感知。</div>
+      <div class="rwhy">用户满意度与乘坐舒适性要求控制动作连续自然，交接不产生抖动。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-05</span><span class="rpri m">中</span><span>对应：SH-01 用户 · SH-04 动力域</span></div>
+      <div class="rtext">系统应结合路面附着与车辆状态协调驱动、制动与转向控制，防止打滑、失控，并合理利用能量回收。</div>
+      <div class="rwhy">低附着与极限工况下需在附着力范围内分配控制量，兼顾稳定与能效。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-06</span><span class="rpri m">中</span><span>对应：SH-06 测试 · SH-07 售后</span></div>
+      <div class="rtext">系统应提供可观测的状态、故障码与诊断接口，支持下线检测、标定验证、售后维修与故障追溯。</div>
+      <div class="rwhy">测试与售后依赖数据定位问题；关键事件须可记录、可追溯以支持责任界定。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-07</span><span class="rpri m">中</span><span>对应：SH-07 售后 · SH-11 车云</span></div>
+      <div class="rtext">系统应支持标定与软件版本的可管理升级，升级过程具备版本记录、回退与一致性校验能力。</div>
+      <div class="rwhy">平台化迭代与 OTA 要求版本可控，避免升级不一致或无法回退。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-08</span><span class="rpri m">中</span><span>对应：SH-10 法规 · SH-09 安全</span></div>
+      <div class="rtext">系统应满足规定环境（温度、振动、电压、电磁兼容）下的工作要求，并在信息安全上具备访问控制与防护能力。</div>
+      <div class="rwhy">整车环境与网络安全准入是强制约束，需防止环境失效与非法访问/误控。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-09</span><span class="rpri m">中</span><span>对应：SH-02 整车厂 · SH-13 供应链</span></div>
+      <div class="rtext">系统方案应在平台成本与进度约束内可行，关键件具备备选来源或风险预案，预留向架构演进的接口与算力空间。</div>
+      <div class="rwhy">采办方与供应链管理要求方案可落地、可量产，并适应长期架构演进。</div>
+    </div>
+    <div class="req">
+      <div class="req-head"><span class="rid">SR-10</span><span class="rpri l">低</span><span>对应：SH-12 被影响方</span></div>
+      <div class="rtext">系统应控制自身噪声、振动与对外排放影响，降低对周边交通参与者与环境的干扰。</div>
+      <div class="rwhy">被影响相关方要求系统在使用过程中不产生超出允许范围的外部负效应。</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:22px">
+    <h4>关键性能指标与质量特性（MOE / 质量维度）</h4>
+    <div class="kpis">
+      <div class="kpi"><div class="v">安全可控</div><div class="kty">关键功能冗余与降级能力，失效后保持基本可控</div></div>
+      <div class="kpi"><div class="v">响应及时</div><div class="k">控制指令在平台规定时序窗内完成闭环响应</div></div>
+      <div class="kpi"><div class="v">平顺稳定</div><div class="k">轨迹跟随精度、乘坐舒适性与车身稳定性达标</div></div>
+      <div class="kpi"><div class="v">可追溯可维护</div><div class="k">状态/故障/版本可记录、可诊断、可升级</div></div>
+    </div>
+    <div class="note">需求质量自检：上述条目使用相关方可理解的语言表述，具备优先级与依据；每条为单一需求、可通过检查/分析/演示/测试验证，并可向上追溯到业务目标与相关方需要；具体定量指标在后续系统需求（SRS）阶段按平台标定。</div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div><b>面向高阶智能驾驶的线控底盘系统</b> · BRS 与 StRS 概念定义</div>
+    <div>依据 ISO/IEC/IEEE 15288 · 29148 框架编制 · 小组作业 2</div>
+  </div>
+</footer>
+
+</body>
+</html>
