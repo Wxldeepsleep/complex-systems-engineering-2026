@@ -1,0 +1,129 @@
+<section id="overview">
+  <div class="sec-head"><span class="sec-num">00</span><h2>概述与作业对照</h2></div>
+  <p class="sec-sub">本页对应小组作业 3 的四项输出要求，全部内容在同一 HTML 页面内组织，并与作业 1（六层分解）、作业 2（BRS/StRS）保持术语与需求追溯一致。</p>
+  <div class="req-map">
+    <div class="rm"><div class="rm-tag">输出 ①</div><h4>系统需求规格书</h4><p>按表 5-1（ISO/IEC/IEEE 29148:2018 SyRS 范例）逐项展开，见第 01 章。</p></div>
+    <div class="rm"><div class="rm-tag">输出 ②</div><h4>初始系统架构</h4><p>功能 / 逻辑 / 物理 / 接口四视图，见第 02 章。</p></div>
+    <div class="rm"><div class="rm-tag">输出 ③</div><h4>系统控制框图</h4><p>Driver—System—Vehicle—Environment—Other System 闭环结构，见第 03 章。</p></div>
+    <div class="rm"><div class="rm-tag">输出 ④</div><h4>安全需求与安全架构</h4><p>基于初始架构的系统理论过程分析（STPA），见第 04 章。</p></div>
+  </div>
+  <div class="card">
+    <h4>系统定义（沿用作业 1 / 作业 2）<span class="tag">System of Interest</span></h4>
+    <p><b>面向高阶智能驾驶的线控底盘系统</b>，是以电信号传递控制指令、分布式执行器独立驱动为核心，集成<b>线控转向（SBW）、线控制动（BBW/EHB/EMB）、线控驱动协调、悬架与车身姿态控制</b>等子系统，并由<b>底盘域控制器</b>完成信号融合、整车动力学协调与安全监控的底盘执行层系统。它是高阶智能驾驶（L2+ 至 L4）的执行底座：上层智驾算法给出纵向加减速、横向转角与车身稳定性目标，线控底盘将其实时、精确、安全地转化为车轮与路面的力与运动。</p>
+    <p><b>边界：</b>感知与决策算法（摄像头、雷达、规控模型）属于智驾域，不在本系统内部；本系统只对「控制指令的接收—解析—协调—执行—状态反馈」负责。</p>
+  </div>
+  <div class="card">
+    <h4>需求追溯关系 <span class="tag">BRS/StRS → SyRS</span></h4>
+    <p>作业 2 输出的 10 条相关方需求（SR-01 ~ SR-10）是本 SyRS 的直接输入；系统需求由相关方需求经分解、预算分配与继承转换而来，每条系统需求均标注其上游 SR 编号，保证双向可追溯。</p>
+  </div>
+</section>
+<section id="syrs">
+  <div class="sec-head"><span class="sec-num">01</span><h2>系统需求规格书（SyRS）</h2></div>
+  <p class="sec-sub">对应参考资料表 5-1《ISO/IEC/IEEE 29148:2018 标准中的 SyRS 范例》。SyRS 从方案域以系统视角定义高层次技术需求，描述系统「将做什么」、与外部环境的交互及接口，不规定具体实现。</p>
+  <div class="card">
+    <div class="clause"><div class="cl-title"><span class="code">1.1</span>简介 · 系统目的</div><p>线控底盘系统的目的是接收智驾域（或驾驶员）的运动控制指令，实时、精确、安全地完成车辆纵向、横向与垂向运动控制，使高阶自动驾驶决策能够闭环作用于车辆物理运动，并在正常与失效工况下维持车辆基本可控。具体目标：</p><ul><li>为 L2+ 至 L4 级自动驾驶提供可由算法直接控制的转向、制动、驱动执行接口；</li><li>将上层目标（目标加速度、目标转角、目标横摆角速度、目标姿态）稳定、精确地落到车轮与路面；</li><li>通过冗余与降级，在主通路失效后保持最低可接受的操控能力与安全停车能力。</li></ul></div>
+    <div class="clause"><div class="cl-title"><span class="code">1.2</span>简介 · 系统范围</div><ul><li><b>在范围内：</b>底盘域控制器软硬件；线控转向、线控制动、驱动协调、悬架姿态四个执行子系统；与智驾域 / 动力域 / 电源域 / HMI / 车云的接口；台架与整车标定验证、量产装车与售后保障。</li><li><b>范围以外：</b>感知传感器、自动驾驶规控算法本体、车身内外饰、轮胎与整车总布置（由其他系统负责，本系统通过接口协同）。</li></ul></div>
+    <div class="clause"><div class="cl-title"><span class="code">1.3</span>简介 · 系统概况</div><p>系统以底盘域控制器为协调核心：向上通过车载总线 / 以太网接收智驾域目标指令与驾驶员操作、接收动力域与电源域状态；向下驱动四个执行子系统完成转向、制动、驱动与姿态动作；同时采集轮速、转角、压力、姿态等信号形成闭环，并向整车与智驾域回传执行状态与健康度。</p></div>
+    <div class="clause"><div class="cl-title"><span class="code">1.4</span>简介 · 系统环境</div><ul><li><b>运行环境：</b>城市道路、高速公路、停车场、低附着（湿滑 / 冰雪）路面、颠簸路面；冷热气候、高低电压、正常与老化载荷。</li><li><b>互操作环境：</b>智驾域控制器、整车控制器 VCU、动力域 / BMS、HMI 仪表、车云后台与 OTA / 诊断系统。</li><li><b>物理环境：</b>道路附着条件、交通参与者与信号、环境温度 / 振动 / 电磁干扰、轮胎状态与老化。</li></ul></div>
+    <div class="clause"><div class="cl-title"><span class="code">1.5</span>简介 · 系统功能</div><p>系统总体功能 F0：<b>把上层运动目标闭环转化为车辆可控的力与运动</b>。分解为指令接收与解析、状态采集与融合、协调控制量分配、执行器驱动、反馈闭环、安全监控与降级六组功能（详见第 02 章功能架构）。</p></div>
+    <div class="clause"><div class="cl-title"><span class="code">1.6</span>简介 · 用户特征</div><ul><li><b>直接使用方：</b>驾驶员 / 车主（手动模式操作与体验）、智驾系统（自动控制方，非自然人使用者）。</li><li><b>使能方：</b>标定与测试人员、售后维修人员、系统开发与质量安全团队。</li><li><b>特征：</b>驾驶员关注操控跟手性与接管平顺性；智驾系统要求接口标准化、时序确定；售后要求可诊断、可维护。</li></ul></div>
+  </div>
+  <div class="card">
+    <div class="clause"><div class="cl-title"><span class="code">2</span>定义</div><ul><li><b>线控（X-by-Wire）：</b>以电信号代替机械 / 液压硬连接传递控制指令，由独立布置的执行器完成转向、制动等动作。</li><li><b>SBW / BBW：</b>线控转向 / 线控制动；EHB 为电子液压制动，EMB 为电子机械制动。</li><li><b>冗余与降级：</b>主通路失效后由备份通路维持基本可控；降级指部分功能受限条件下保证安全行驶。</li><li><b>最小风险状态（MRC）：</b>系统失效后车辆应进入的安全可控状态（如靠边停车 / 限速蠕行）。</li><li><b>UCA：</b>不安全控制动作（Unsafe Control Action），STPA 分析的核心识别对象。</li></ul></div>
+  </div>
+  <div class="card">
+    <div class="clause"><div class="cl-title"><span class="code">3</span>参考</div><ul><li>ISO/IEC/IEEE 15288:2023《系统与软件工程 — 系统生存周期过程》</li><li>ISO/IEC/IEEE 29148:2018《系统与软件工程 — 生存周期过程 — 需求工程》（表 5-1 SyRS 范例）</li><li>ISO 26262《道路车辆 功能安全》、ISO 21448《预期功能安全 SOTIF》、ISO/SAE 21434《道路车辆 网络安全工程》</li><li>郭宝柱《系统工程：基于国际标准过程的研究与实践》第 5 章 系统定义</li><li>本课程作业 1《线控底盘六层框架分析》、作业 2《BRS / StRS 需求规格说明》</li></ul></div>
+  </div>
+  <div class="card">
+    <h4>4 系统需求 <span class="tag">4.1 功能需求</span></h4>
+    <div class="req-list">
+      <div class="req"><div class="req-head"><span class="rid">FR-01</span><span class="rpri h">高</span><span class="pill func">功能</span></div><div class="rtext">系统应接收并解析智驾域目标指令（目标加速度 / 减速度、目标前轮转角、目标横摆角速度、目标车身姿态）与驾驶员操作信号，完成合法性校验后送入协调控制。</div><div class="rwhy">智驾闭环依赖底盘可被算法控制，非法或越限指令必须被拦截。</div><div class="rtrace">追溯：SR-02 · SR-01</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-02</span><span class="rpri h">高</span><span class="pill func">功能</span></div><div class="rtext">系统应采集轮速、方向盘转角 / 扭矩、齿条位移、制动压力、电机电流、车身姿态与电源电压等信号，融合估计车辆状态与路面附着条件。</div><div class="rwhy">协调控制与防滑、稳定控制都依赖状态与附着估计。</div><div class="rtrace">追溯：SR-05 · SR-06</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-03</span><span class="rpri h">高</span><span class="pill func">功能</span></div><div class="rtext">系统应在纵向（驱动 / 制动）、横向（转向）、垂向（悬架）之间协调分配控制量，使合成控制不超出轮胎附着极限，防止打滑与失控。</div><div class="rwhy">极限与低附着工况下需在附着力范围内分配控制量。</div><div class="rtrace">追溯：SR-05 · SR-01</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-04</span><span class="rpri h">高</span><span class="pill func">功能</span></div><div class="rtext">线控转向子系统应按目标转角闭环驱动转向执行电机，提供模拟路感反馈，并支持低速大转角泊车与高速转向稳定。</div><div class="rwhy">横向控制是高阶智驾轨迹跟随的执行基础。</div><div class="rtrace">追溯：SR-01 · SR-04</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-05</span><span class="rpri h">高</span><span class="pill func">功能</span></div><div class="rtext">线控制动子系统应按目标减速度 / 制动压力闭环建压，支持常规制动、主动紧急制动、ABS / ESC 协调与能量回收协调。</div><div class="rwhy">纵向减速与主动安全依赖制动执行。</div><div class="rtrace">追溯：SR-01 · SR-05</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-06</span><span class="rpri m">中</span><span class="pill func">功能</span></div><div class="rtext">线控驱动协调应响应电机扭矩请求，完成驱动防滑与扭矩矢量分配，并与动力域协调能量回收。</div><div class="rwhy">纵向加速与稳定需要驱动侧配合。</div><div class="rtrace">追溯：SR-05</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-07</span><span class="rpri m">中</span><span class="pill func">功能</span></div><div class="rtext">悬架姿态协调应根据工况调节阻尼与车身高度，抑制俯仰 / 侧倾，并与转向、制动动作协同。</div><div class="rwhy">垂向姿态影响乘坐舒适与稳定裕度。</div><div class="rtrace">追溯：SR-04</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-08</span><span class="rpri h">高</span><span class="pill func">功能</span></div><div class="rtext">系统应在自动 / 手动模式之间平滑融合或交接控制指令，交接过程不产生控制阶跃与抖动。</div><div class="rwhy">人机共驾要求接管平顺、可感知。</div><div class="rtrace">追溯：SR-04</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-09</span><span class="rpri h">高</span><span class="pill func">功能</span></div><div class="rtext">系统应持续监控输出合理性与通路健康，主通路失效时切换备份通路或进入受限降级，并按分级规则告警。</div><div class="rwhy">单一失效防护是法规与功能安全要求。</div><div class="rtrace">追溯：SR-03</div></div>
+      <div class="req"><div class="req-head"><span class="rid">FR-10</span><span class="rpri m">中</span><span class="pill func">功能</span></div><div class="rtext">系统应记录关键控制动作、故障事件与软件版本，提供标准化诊断接口，支持下线检测、售后维修与故障追溯。</div><div class="rwhy">测试与售后依赖数据定位问题，关键事件须可追溯。</div><div class="rtrace">追溯：SR-06 · SR-07</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>4.2 可用性需求 <span class="tag">Availability / Reliability</span></h4>
+    <div class="req-list">
+      <div class="req"><div class="req-head"><span class="rid">UR-01</span><span class="rpri h">高</span><span class="pill avail">可用性</span></div><div class="rtext">关键行驶功能应高可用，平均无故障时间（MTBF）达到企业质量目标；安全相关功能按 ISO 26262 功能安全等级（ASIL）设计与验证。</div><div class="rwhy">行车安全与企业质量目标要求。</div><div class="rtrace">追溯：SR-01 · SR-08</div></div>
+      <div class="req"><div class="req-head"><span class="rid">UR-02</span><span class="rpri m">中</span><span class="pill avail">可用性</span></div><div class="rtext">系统在规定环境范围内应持续可用；超出环境边界时进入保护 / 降级状态，而非异常失效或无响应。</div><div class="rwhy">环境超限是现实工况，需要可预期的保护行为。</div><div class="rtrace">追溯：SR-08</div></div>
+      <div class="req"><div class="req-head"><span class="rid">UR-03</span><span class="rpri m">中</span><span class="pill avail">可用性</span></div><div class="rtext">系统应可维护、可升级：故障可定位、执行器可替换，标定与软件版本可管理升级并支持一致性校验与回退。</div><div class="rwhy">平台化迭代与售后要求版本可控。</div><div class="rtrace">追溯：SR-06 · SR-07</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>4.3 性能需求 <span class="tag">关键指标 · 示例值待平台标定</span></h4>
+    <div class="kpis">
+      <div class="kpi"><div class="v">≤10 ms</div><div class="k">转向 / 制动控制环路周期</div></div>
+      <div class="kpi"><div class="v">≤100 ms</div><div class="k">智驾指令到执行响应端到端时延（平台指标）</div></div>
+      <div class="kpi"><div class="v">±1°</div><div class="k">目标转角跟踪误差（示例）</div></div>
+      <div class="kpi"><div class="v">≤150 ms</div><div class="k">紧急制动建压响应（示例）</div></div>
+    </div>
+    <div class="req-list" style="margin-top:14px">
+      <div class="req"><div class="req-head"><span class="rid">PR-01</span><span class="rpri h">高</span><span class="pill perf">性能</span></div><div class="rtext">转向 / 制动控制环路周期不大于 10 ms，底盘域协调控制周期不大于 20 ms，保证高速工况实时闭环。</div><div class="rtrace">追溯：SR-02 · SR-05</div></div>
+      <div class="req"><div class="req-head"><span class="rid">PR-02</span><span class="rpri h">高</span><span class="pill perf">性能</span></div><div class="rtext">从智驾域发出控制指令到底盘执行响应的端到端时延不大于平台规定值（示例 ≤100 ms）。</div><div class="rtrace">追溯：SR-02</div></div>
+      <div class="req"><div class="req-head"><span class="rid">PR-03</span><span class="rpri m">中</span><span class="pill perf">性能</span></div><div class="rtext">目标前轮转角跟踪误差不大于 ±1°（示例值，以平台标定为准）；路感反馈无明显迟滞。</div><div class="rtrace">追溯：SR-04</div></div>
+      <div class="req"><div class="req-head"><span class="rid">PR-04</span><span class="rpri h">高</span><span class="pill perf">性能</span></div><div class="rtext">紧急制动建压响应不大于 150 ms（示例）；制动压力控制误差满足平台指标。</div><div class="rtrace">追溯：SR-01</div></div>
+      <div class="req"><div class="req-head"><span class="rid">PR-05</span><span class="rpri m">中</span><span class="pill perf">性能</span></div><div class="rtext">自动驾驶轨迹跟随的横向偏差与纵向跟车距离误差满足平台标定指标；控制输出平顺、无突兀加减速与急打方向。</div><div class="rtrace">追溯：SR-04 · SR-05</div></div>
+      <div class="req"><div class="req-head"><span class="rid">PR-06</span><span class="rpri h">高</span><span class="pill perf">性能</span></div><div class="rtext">主通路失效后备份通路切换时间不大于规定值，切换期间车辆保持方向可控与减速能力。</div><div class="rtrace">追溯：SR-03</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>4.4 接口需求 <span class="tag">外部 / 内部</span></h4>
+    <div class="table-box"><table>
+      <colgroup><col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need"></colgroup>
+      <thead><tr><th>编号</th><th>接口对象</th><th>类型</th><th>交换内容（输入 / 输出）</th><th>协议与时序要求</th></tr></thead>
+      <tbody>
+        <tr><td>IR-E-01</td><td>智驾域控制器</td><td><span class="pill iface">外部</span></td><td>输入：目标加速度、目标转角、目标横摆、模式 / 接管指令；输出：执行状态、健康度、故障码。</td><td>CAN FD / 车载以太网；周期与超时按平台通信矩阵定义。</td></tr>
+        <tr><td>IR-E-02</td><td>驾驶员 / HMI</td><td><span class="pill iface">外部</span></td><td>输入：方向盘转角 / 扭矩、制动 / 加速踏板信号；输出：状态显示、告警、接管请求。</td><td>信号周期确定，告警分级显示。</td></tr>
+        <tr><td>IR-E-03</td><td>动力域 / VCU / BMS</td><td><span class="pill iface">外部</span></td><td>输入：电机能力、电压 / 电池状态；输出：扭矩请求、能量回收协调请求。</td><td>CAN 通信，功率约束需双向通报。</td></tr>
+        <tr><td>IR-E-04</td><td>车云 / OTA / 诊断</td><td><span class="pill iface">外部</span></td><td>输入：升级包、诊断请求；输出：故障码、版本、运行数据。</td><td>访问控制、加密传输、升级一致性校验。</td></tr>
+        <tr><td>IR-I-01</td><td>各执行子系统</td><td><span class="pill iface">内部</span></td><td>域控 → 执行器：电流 / 扭矩 / 压力 / 转角目标；执行器 → 域控：实际输出与健康状态。</td><td>内部总线，闭环反馈周期与控制周期一致。</td></tr>
+        <tr><td>IR-I-02</td><td>冗余通路之间</td><td><span class="pill iface">内部</span></td><td>主 / 备通路健康状态交换、切换握手与一致性校核。</td><td>独立通信链路，切换握手有时限要求。</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h4>5 系统运行</h4>
+    <div class="clause"><div class="cl-title"><span class="code">5.1</span>系统模式与状态</div><ul><li><b>下电休眠 / 上电自检：</b>控制器休眠待命；上电完成自检、冗余通路确认与就绪判定。</li><li><b>手动驾驶模式：</b>响应驾驶员操作，提供转向助力、制动助力与稳定支持。</li><li><b>自动驾驶模式：</b>接收智驾目标，闭环执行转向、制动、驱动与姿态控制。</li><li><b>接管 / 混合模式：</b>人机权限过渡，指令按规则融合或平滑切换。</li><li><b>冗余降级模式：</b>主通路失效后备份通路工作，功能受限但保持可控并告警。</li><li><b>驻车保持：</b>驻车制动保持，下电前完成状态存储。</li></ul></div>
+    <div class="clause"><div class="cl-title"><span class="code">5.2</span>物理特征</div><ul><li>执行器分布式布置于转向机、制动总成、电机与悬架处；底盘域控制器集中布置。</li><li>供电：12V / 48V 低压与高压驱动协同，关键安全件双电源。</li><li>重量、安装接口、散热与空间随整车总布置约束，冗余件需独立安装位置。</li></ul></div>
+    <div class="clause"><div class="cl-title"><span class="code">5.3</span>环境条件</div><ul><li>工作温度、湿度、振动、冲击与电磁兼容（EMC）范围按整车规范；超出范围进入保护 / 降级。</li><li>防护等级适应底盘舱位泥水、粉尘环境；耐电压波动与抛负载。</li></ul></div>
+  </div>
+  <div class="card">
+    <h4>6 安保需求 <span class="tag">Safety &amp; Security 防护</span></h4>
+    <div class="req-list">
+      <div class="req"><div class="req-head"><span class="rid">SEC-01</span><span class="rpri h">高</span><span class="pill avail">安保</span></div><div class="rtext">关键控制通信应防非法篡改与注入，采用加密与消息认证；诊断与升级接口具备访问控制。</div><div class="rwhy">网络安全准入要求（ISO/SAE 21434），防止恶意误控。</div><div class="rtrace">追溯：SR-08</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SEC-02</span><span class="rpri h">高</span><span class="pill avail">安保</span></div><div class="rtext">所有控制输出须经合理性校验，越限 / 矛盾指令拒绝执行并上报，防止误触发。</div><div class="rwhy">防止错误或恶意指令直接作用于车轮。</div><div class="rtrace">追溯：SR-03 · SR-01</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SEC-03</span><span class="rpri m">中</span><span class="pill avail">安保</span></div><div class="rtext">执行器机械连接具备防误动与防护设计，防止装配 / 维修过程中非预期动作。</div><div class="rtrace">追溯：SR-06</div></div>
+    </div>
+  </div>
+  <div class="card"><h4>7 信息管理需求</h4><ul><li>统一底盘信号字典、标定数据与故障码组织规则；关键控制动作、故障事件与版本号须被记录并可追溯。</li><li>升级前后版本一致性可校验；运行数据按隐私与合规要求存储、回传。</li></ul></div>
+  <div class="card"><h4>8 政策与法规需求</h4><ul><li>满足转向、制动强制法规与整车准入要求；功能安全按 ISO 26262 完成 ASIL 分级与安全论证。</li><li>预期功能安全按 ISO 21448（SOTIF）分析由感知 / 局限导致的危险场景；网络安全按 ISO/SAE 21434 落地。</li><li>满足行业标准对失效告警、降级提示与驾驶员告知的规定。</li></ul></div>
+  <div class="card"><h4>9 系统生存周期支持需求 <span class="tag">包装 / 处理 / 装载 / 运输</span></h4><ul><li>执行器与控制器应可制造、可装配、可维修，关键件具备备选供应来源或风险预案。</li><li>包装、搬运、装载与运输满足防震、防潮、防静电要求；报废后按法规回收拆解。</li><li>预留向域集中 / 中央计算架构演进的接口与算力空间。</li></ul></div>
+  <div class="card">
+    <h4>10 验证 <span class="tag">与第 4 章系统需求逐条对应</span></h4>
+    <div class="table-box"><table>
+      <colgroup><col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need"></colgroup>
+      <thead><tr><th>需求组</th><th>代表需求</th><th>验证方式</th><th>验证内容</th><th>对应章节</th></tr></thead>
+      <tbody>
+        <tr><td>FR 功能</td><td>FR-01 ~ FR-10</td><td>测试 / 演示</td><td>台架 HIL 与整车场地测试，逐条核验功能行为。</td><td>4.1</td></tr>
+        <tr><td>UR 可用性</td><td>UR-01 ~ UR-03</td><td>分析 / 测试</td><td>可靠性统计、环境与寿命试验、可维护性检查。</td><td>4.2</td></tr>
+        <tr><td>PR 性能</td><td>PR-01 ~ PR-06</td><td>测量 / 测试</td><td>示波器 / 数据日志测量周期、时延、精度与切换时间。</td><td>4.3</td></tr>
+        <tr><td>IR 接口</td><td>IR-E / IR-I</td><td>检查 / 分析</td><td>通信矩阵评审、总线协议与时序一致性检查。</td><td>4.4</td></tr>
+        <tr><td>SEC 安保</td><td>SEC-01 ~ SEC-03</td><td>分析 / 测试</td><td>威胁分析、渗透测试、合理性校验用例测试。</td><td>6</td></tr>
+        <tr><td>REG 法规</td><td>第 8 章</td><td>检查 / 评审</td><td>法规标准符合性审查、功能安全 / SOTIF 评审。</td><td>8</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h4>11 附录</h4>
+    <div class="clause"><div class="cl-title"><span class="code">11.1</span>假设与依赖</div><ul><li>假设智驾域提供的目标指令在其自身功能边界内有效；感知 / 规控局限由 SOTIF 另行分析。</li><li>依赖整车供电、车载网络与 E/E 架构提供符合指标的电源与通信通道。</li><li>依赖执行器供应商按接口规范交付；关键性能定量指标在平台标定阶段最终确定。</li></ul></div>
+    <div class="clause"><div class="cl-title"><span class="code">11.2</span>缩写与缩略语</div><ul><li>SyRS：系统需求规格说明；SBW / BBW：线控转向 / 线控制动；EHB / EMB：电子液压 / 电子机械制动。</li><li>VCU：整车控制器；BMS：电池管理系统；HMI：人机界面；OTA：在线升级；ASIL：汽车安全完整性等级。</li><li>STPA：系统理论过程分析；UCA：不安全控制动作；MRC：最小风险状态；SOTIF：预期功能安全。</li></ul></div>
+  </div>
+</section>
