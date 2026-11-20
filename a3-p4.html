@@ -1,0 +1,105 @@
+<section id="safety">
+  <div class="sec-head"><span class="sec-num">04</span><h2>安全需求与安全架构</h2></div>
+  <p class="sec-sub">基于第 02 章初始系统架构与第 03 章控制结构，采用系统理论过程分析（STPA）：先建立控制结构，再识别不安全控制动作（UCA），由 UCA 导出安全需求，最后落实为安全架构机制。STPA 把安全视为控制问题——危险来自「不恰当的控制动作」，而非单一零部件失效。</p>
+  <div class="card">
+    <h4>4.1 系统级危险识别 <span class="tag">Hazard List</span></h4>
+    <div class="table-box"><table>
+      <colgroup><col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need"></colgroup>
+      <thead><tr><th>编号</th><th>危险</th><th>后果</th><th>成因方向</th><th>关联需求</th></tr></thead>
+      <tbody>
+        <tr><td>H-1</td><td>转向失控 / 转向失效</td><td>车辆不按预期转向或意外转向，偏离车道 / 冲出</td><td>主通路失效、错误转角输出</td><td>FR-04 · SRF-01/02</td></tr>
+        <tr><td>H-2</td><td>制动失效或误制动</td><td>无法减速碰撞；或非预期制动引发后车追尾 / 失控</td><td>建压失效、误触发、压力超限</td><td>FR-05 · SRF-01/02</td></tr>
+        <tr><td>H-3</td><td>驱动扭矩失控</td><td>非预期加速 / 扭矩超限，碰撞或甩尾</td><td>扭矩请求错误、防滑失效</td><td>FR-06 · SRF-02</td></tr>
+        <tr><td>H-4</td><td>人机 / 多域指令冲突</td><td>控制混乱、交接阶跃扰动</td><td>仲裁缺失、切换时机不当</td><td>FR-08 · SRF-03</td></tr>
+        <tr><td>H-5</td><td>通信丢失 / 超时</td><td>控制中断或依据过期指令执行</td><td>总线故障、报文超时</td><td>IR-E-01 · SRF-04</td></tr>
+        <tr><td>H-6</td><td>电源失效</td><td>执行丧失、车辆失控</td><td>单电源供电、电压跌落</td><td>5.2 · SRF-07</td></tr>
+        <tr><td>H-7</td><td>车辆失稳</td><td>侧滑 / 甩尾 / 侧翻</td><td>超出附着极限、协调限幅缺失</td><td>FR-03 · SRF-02</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h4>4.2 不安全控制动作识别（UCA）<span class="tag">四类情形</span></h4>
+    <div class="table-box"><table>
+      <colgroup><col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need"></colgroup>
+      <thead><tr><th>编号</th><th>UCA 描述</th><th>情形</th><th>可能导致的危险</th><th>对应控制链路</th></tr></thead>
+      <tbody>
+        <tr><td>UCA-1</td><td>紧急避障 / 碰撞风险下未提供制动控制动作</td><td>未提供必要动作</td><td>H-2 → 碰撞</td><td>System → Vehicle 制动</td></tr>
+        <tr><td>UCA-2</td><td>提供过大转角或错误方向转角（超出附着 / 限幅）</td><td>提供不安全动作</td><td>H-1 / H-7</td><td>System → Vehicle 转向</td></tr>
+        <tr><td>UCA-3</td><td>非预期制动（误触发 / 压力超限）</td><td>提供不安全动作</td><td>H-2</td><td>System → Vehicle 制动</td></tr>
+        <tr><td>UCA-4</td><td>非预期驱动扭矩输出或扭矩超限</td><td>提供不安全动作</td><td>H-3</td><td>System → Vehicle 驱动</td></tr>
+        <tr><td>UCA-5</td><td>自动 / 手动切换时机或融合不当，产生指令冲突阶跃</td><td>时机不当</td><td>H-4</td><td>Driver ↔ System 仲裁</td></tr>
+        <tr><td>UCA-6</td><td>通信超时 / 丢失后仍按旧指令输出控制</td><td>时机 / 依据不当</td><td>H-5</td><td>Driver → System 链路</td></tr>
+        <tr><td>UCA-7</td><td>降级后未保持受限运行，或误提前恢复全功能</td><td>持续 / 停止不当</td><td>H-1 / H-2</td><td>F6 安全监控</td></tr>
+        <tr><td>UCA-8</td><td>制动 / 转向动作持续不解除（卡滞）</td><td>持续不当</td><td>H-2 / H-1</td><td>System → Vehicle</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h4>4.3 导出安全需求 <span class="tag">Safety Requirements</span></h4>
+    <div class="req-list">
+      <div class="req"><div class="req-head"><span class="rid">SRF-01</span><span class="rpri h">高</span><span class="pill avail">安全</span></div><div class="rtext">转向与制动关键通路应具备冗余备份：主通路失效后备份通路在规定时间内接管，保持方向可控与减速能力（应对 UCA-1 / UCA-8，H-1 / H-2）。</div><div class="rwhy">单一失效防护，法规与 ISO 26262 要求。</div><div class="rtrace">来源：UCA-1 · UCA-8 · H-1 · H-2；落实：2.3 物理架构冗余通路</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SRF-02</span><span class="rpri h">高</span><span class="pill avail">安全</span></div><div class="rtext">所有下行控制输出须经合理性校验：转角、制动压力、驱动扭矩限幅并与车辆状态 / 附着一致性核对，越限或矛盾输出拒绝执行（应对 UCA-2 / UCA-3 / UCA-4，H-2 / H-3 / H-7）。</div><div class="rwhy">防止错误动作直接作用于车轮。</div><div class="rtrace">来源：UCA-2 · UCA-3 · UCA-4；落实：LE-5 安全监控逻辑</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SRF-03</span><span class="rpri h">高</span><span class="pill avail">安全</span></div><div class="rtext">建立人机 / 多域指令仲裁规则：安全相关操作优先，驾驶员应急介入按规则优先；自动 / 手动切换平滑融合，禁止控制阶跃（应对 UCA-5，H-4）。</div><div class="rwhy">消除指令冲突与交接扰动。</div><div class="rtrace">来源：UCA-5 · H-4；落实：F3.2 人机仲裁</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SRF-04</span><span class="rpri h">高</span><span class="pill avail">安全</span></div><div class="rtext">监控通信链路：报文超时 / 丢失时停止依据旧指令输出，转入安全状态（限速蠕行或安全停车）并告警（应对 UCA-6，H-5）。</div><div class="rwhy">防止过期或缺失指令导致误执行。</div><div class="rtrace">来源：UCA-6 · H-5；落实：通信监控 + 超时处理</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SRF-05</span><span class="rpri h">高</span><span class="pill avail">安全</span></div><div class="rtext">设置独立于主控的安全监控（Safety MCU），旁路校核主控输出与通路健康，发现异常独立触发保护，不依赖主控自检。</div><div class="rwhy">共因失效防护，满足 ASIL 分解要求。</div><div class="rtrace">来源：H-1 ~ H-7 通用；落实：2.3 物理架构 Safety MCU</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SRF-06</span><span class="rpri h">高</span><span class="pill avail">安全</span></div><div class="rtext">实行分级降级与最小风险状态（MRC）：提示 → 功能降级限幅 → 安全靠边 / 停车；降级期间保持受限可控，故障消除前不得误恢复全功能（应对 UCA-7，H-1 / H-2）。</div><div class="rwhy">失效后必须落到可接受的安全状态。</div><div class="rtrace">来源：UCA-7 · H-1 · H-2；落实：F6.2 冗余切换与分级降级</div></div>
+      <div class="req"><div class="req-head"><span class="rid">SRF-07</span><span class="rpri m">中</span><span class="pill avail">安全</span></div><div class="rtext">关键安全件双电源供电，监控电压跌落；单路电源失效时由备份电源维持安全相关执行（应对 H-6）。</div><div class="rwhy">防止电源单点失效导致执行丧失。</div><div class="rtrace">来源：H-6；落实：2.3 电源监控 / 双电源</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>4.4 安全架构 <span class="tag">Safety Architecture</span></h4>
+    <div class="diagram">
+      <svg viewBox="0 0 920 480" width="100%" role="img" aria-label="线控底盘安全架构图">
+        <defs><marker id="sarr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2f6f8f"/></marker><marker id="sarrR" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#b4463a"/></marker></defs>
+        <rect x="60" y="30" width="800" height="70" rx="12" fill="#f7e7e4" stroke="#b4463a" stroke-width="1.8"/><text x="460" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#b4463a">安全监控层（横切）：Safety MCU 独立校核 + 看门狗 + 输出合理性校验（SRF-05 / SRF-02）</text><text x="460" y="82" text-anchor="middle" font-size="12" fill="#3c4a57">旁路监视主控输出与通路健康，异常时独立触发保护，不依赖主控自检</text>
+        <rect x="80" y="150" width="340" height="150" rx="12" fill="#123a5c"/><text x="250" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">主控通道（Primary）</text><text x="250" y="208" text-anchor="middle" font-size="12.5" fill="#dce8f0">主控 MCU / SoC：协调控制算法、人机仲裁</text><text x="250" y="232" text-anchor="middle" font-size="12.5" fill="#dce8f0">主通信链路 · 主电源 · 主执行通路</text><text x="250" y="262" text-anchor="middle" font-size="12" fill="#dce8f0">正常工况下承担全部控制功能</text>
+        <rect x="500" y="150" width="340" height="150" rx="12" fill="#e2f1ee" stroke="#2e8b7f" stroke-width="1.8"/><text x="670" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#1f6f65">冗余通道（Backup）</text><text x="670" y="208" text-anchor="middle" font-size="12.5" fill="#3c4a57">备份控制器 / 备份执行 · 独立通信 · 独立电源</text><text x="670" y="232" text-anchor="middle" font-size="12.5" fill="#3c4a57">主通路失效时在规定时间内接管（SRF-01 / SRF-07）</text><text x="670" y="262" text-anchor="middle" font-size="12" fill="#3c4a57">维持基本可控 → 分级降级 → MRC（SRF-06）</text>
+        <rect x="80" y="360" width="760" height="80" rx="12" fill="#e8eef6" stroke="#3a6ea5" stroke-width="1.6"/><text x="460" y="390" text-anchor="middle" font-size="15" font-weight="700" fill="#123a5c">安全响应链：故障检测 → 合理性 / 超时判定 → 仲裁切换 → 分级降级 / MRC → HMI 与车云告警</text><text x="460" y="416" text-anchor="middle" font-size="12.5" fill="#3c4a57">通信超时停止旧指令输出（SRF-04）；降级保持受限可控，故障消除前禁止误恢复（SRF-06）</text>
+        <line x1="250" y1="100" x2="250" y2="150" stroke="#b4463a" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#sarrR)"/>
+        <line x1="670" y1="100" x2="670" y2="150" stroke="#b4463a" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#sarrR)"/>
+        <line x1="420" y1="225" x2="500" y2="225" stroke="#2f6f8f" stroke-width="1.8" marker-end="url(#sarr)"/><text x="460" y="216" text-anchor="middle" font-size="11.5" fill="#2f6f8f">失效切换</text>
+        <line x1="250" y1="300" x2="250" y2="360" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#sarr)"/>
+        <line x1="670" y1="300" x2="670" y2="360" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#sarr)"/>
+      </svg>
+      <div class="cap">图 4-1 安全架构：监控层横切校核 + 主 / 备双通道独立 + 统一安全响应链</div>
+    </div>
+    <div class="view-grid" style="margin-top:14px">
+      <div class="view"><h5><span class="vbadge">机制 1</span>冗余独立性</h5><p>电源、通信、控制器、执行四路相互独立，避免共因失效；主备健康状态实时交换。</p></div>
+      <div class="view"><h5><span class="vbadge">机制 2</span>独立安全监控</h5><p>Safety MCU 旁路校核主控输出与通路，看门狗监控程序跑飞，异常独立触发保护。</p></div>
+      <div class="view"><h5><span class="vbadge">机制 3</span>分级降级与 MRC</h5><p>提示 → 限幅降级 → 安全靠边 / 停车；降级期间保持受限可控，禁止误恢复。</p></div>
+      <div class="view"><h5><span class="vbadge">机制 4</span>通信与电源保护</h5><p>报文超时停止旧指令输出；双电源监控电压跌落，备份电源维持安全执行。</p></div>
+    </div>
+  </div>
+</section>
+<section id="verify">
+  <div class="sec-head"><span class="sec-num">05</span><h2>验证与追溯</h2></div>
+  <p class="sec-sub">需求—架构—安全—验证双向追溯，保证作业 2 的相关方需求无遗漏地落到系统需求、架构元素与安全机制上。</p>
+  <div class="card">
+    <h4>5.1 需求追溯矩阵 <span class="tag">SR → SyRS → 架构 → 安全</span></h4>
+    <div class="table-box"><table>
+      <colgroup><col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need"></colgroup>
+      <thead><tr><th>上游 SR（作业2）</th><th>SyRS 需求</th><th>架构元素</th><th>安全需求</th><th>验证方式</th></tr></thead>
+      <tbody>
+        <tr><td>SR-01 稳定可控</td><td>FR-04 / FR-05 / PR-04</td><td>F4 执行层 · 物理架构</td><td>SRF-01 / SRF-02</td><td>整车测试</td></tr>
+        <tr><td>SR-02 标准化接口</td><td>FR-01 / IR-E-01 / PR-02</td><td>IF-1 · LE-1</td><td>SRF-04</td><td>接口检查 / 测量</td></tr>
+        <tr><td>SR-03 冗余降级</td><td>FR-09 / PR-06</td><td>F6 · 冗余通路 · Safety MCU</td><td>SRF-01 / SRF-05 / SRF-06</td><td>故障注入测试</td></tr>
+        <tr><td>SR-04 平顺切换</td><td>FR-08 / PR-05</td><td>F3.2 人机仲裁 · LE-3</td><td>SRF-03</td><td>场地测试 / 演示</td></tr>
+        <tr><td>SR-05 附着协调</td><td>FR-02 / FR-03 / FR-06</td><td>F2 · F3.3 · LE-2</td><td>SRF-02</td><td>低附着场地测试</td></tr>
+        <tr><td>SR-06 可观测诊断</td><td>FR-10 / UR-03</td><td>F5 · F6.3 · IF-4</td><td>—</td><td>诊断检查</td></tr>
+        <tr><td>SR-07 版本可管理</td><td>UR-03 / 第 7 章</td><td>IF-4 · OTA 通道</td><td>SEC-01</td><td>升级演练</td></tr>
+        <tr><td>SR-08 环境与信息安全</td><td>UR-02 / SEC-01 / 第 8 章</td><td>5.3 环境 · 通信加密</td><td>SRF-04 / SRF-07</td><td>环境试验 / 渗透测试</td></tr>
+        <tr><td>SR-09 成本与演进</td><td>第 9 章 / 2.5 权衡</td><td>方案 B 域控集中协调</td><td>—</td><td>评审</td></tr>
+        <tr><td>SR-10 外部影响控制</td><td>5.3 / 第 8 章</td><td>—</td><td>—</td><td>检查</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h4>5.2 作业输出闭环检查 <span class="tag">对照作业 3 要求</span></h4>
+    <div class="req-list">
+      <div class="req"><div class="req-head"><span class="rid">✓ ①</span><span>系统需求规格书</span></div><div class="rtext">第 01 章按表 5-1（ISO/IEC/IEEE 29148:2018）完成简介、定义、参考、系统需求（功能 / 可用性 / 性能 / 接口）、系统运行、安保、信息管理、法规、生命周期支持、验证与附录。</div></div>
+      <div class="req"><div class="req-head"><span class="rid">✓ ②</span><span>初始系统架构</span></div><div class="rtext">第 02 章给出功能 / 逻辑 / 物理 / 接口四视图与备选权衡，架构元素可追溯到系统需求。</div></div>
+      <div class="req"><div class="req-head"><span class="rid">✓ ③</span><span>系统控制框图</span></div><div class="rtext">第 03 章按课堂样例绘制 Driver—System—Vehicle—Environment—Other System 闭环框图并说明信号链路。</div></div>
+      <div class="req"><div class="req-head"><span class="rid">✓ ④</span><span>安全需求与安全架构</span></div><div class="rtext">第 04 章基于初始架构完成 STPA：危险识别 → UCA → 7 条安全需求 → 安全架构（冗余 / 监控 / 降级 / 响应链）。</div></div>
+    </div>
+  </div>
+</section>
