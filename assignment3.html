@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>面向高阶智能驾驶的线控底盘系统 · SyRS 需求规格书与初始系统架构（小组作业3）</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23123a5c'/%3E%3Cpath d='M7 15l3.5-6h3L17 15' stroke='%23e8a33d' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='9' cy='16' r='1.6' fill='none' stroke='white' stroke-width='1.5'/%3E%3Ccircle cx='15' cy='16' r='1.6' fill='none' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap">
+<style>
+:root{
+  --ink:#16202a; --ink-soft:#3c4a57; --paper:#f4f6f8; --card:#ffffff; --line:#d9e1e8;
+  --navy:#123a5c; --navy-2:#1d557f; --steel:#2f6f8f; --amber:#e8a33d; --amber-soft:#fbeed7;
+  --teal:#2e8b7f; --teal-soft:#e2f1ee; --red:#b4463a; --red-soft:#f7e7e4;
+  --blue:#3a6ea5; --blue-soft:#e8eef6; --bg:#eef2f5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;font-size:15px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+header.hero{background:linear-gradient(155deg,#0f2f49 0%,#123a5c 46%,#1d557f 100%);color:#f3f7fa;padding:64px 0 52px;position:relative;overflow:hidden}
+header.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 80% at 70% 20%,#000 30%,transparent 75%)}
+.hero-inner{position:relative;z-index:1}
+.hero .kicker{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;font-weight:600;margin-bottom:22px}
+.hero .kicker::before{content:"";width:34px;height:1px;background:var(--amber)}
+.hero h1{font-family:"Noto Serif SC",serif;font-weight:900;font-size:36px;line-height:1.3;max-width:860px;margin-bottom:18px}
+.hero p.lead{font-size:16px;color:#cddce6;max-width:760px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.hero-meta .chip{border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 16px;font-size:13px;color:#dbe7ee;background:rgba(255,255,255,.05)}
+.hero-meta .chip b{color:#fff;font-weight:600}
+nav.toc{position:sticky;top:0;z-index:30;background:rgba(238,242,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 28px}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--ink-soft);font-size:13.5px;padding:7px 13px;border-radius:7px;font-weight:500}
+nav.toc a:hover{background:var(--navy);color:#fff}
+section{padding:46px 0 8px}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+.sec-num{font-family:"Noto Serif SC",serif;font-weight:900;font-size:15px;color:#fff;background:var(--navy);border-radius:8px;padding:4px 12px;flex:none}
+.sec-head h2{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:700;color:var(--navy)}
+.sec-sub{color:var(--ink-soft);font-size:14px;margin:6px 0 26px;padding-left:2px}
+.req-map{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 30px}
+.rm{border:1px solid var(--line);border-radius:14px;padding:18px 18px;background:var(--card);border-top:3px solid var(--navy)}
+.rm h4{font-size:15px;color:var(--navy);margin-bottom:6px}
+.rm p{font-size:13px;color:var(--ink-soft)}
+.rm .rm-tag{font-size:11.5px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--steel);letter-spacing:.04em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin-bottom:18px}
+.card h4{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card h4 .tag{font-size:11.5px;font-weight:500;color:var(--steel);background:#e7f0f5;border-radius:5px;padding:2px 8px;letter-spacing:.04em}
+.card p{margin-bottom:10px;color:var(--ink-soft)}
+.card ul{padding-left:20px;color:var(--ink-soft)}
+.card ul li{margin-bottom:7px}
+.card ul li b{color:var(--ink)}
+.clause{margin-bottom:22px}
+.clause:last-child{margin-bottom:0}
+.clause > .cl-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:10px;padding-left:12px;border-left:3px solid var(--amber)}
+.clause > .cl-title .code{color:var(--steel);font-weight:500;font-size:13px;margin-right:8px}
+.table-box{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;table-layout:fixed}
+col.c-id{width:9%}col.c-name{width:17%}col.c-type{width:14%}col.c-int{width:38%}col.c-need{width:22%}
+th,td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:var(--navy);color:#fff;font-weight:500;font-size:13px}
+tr:last-child td{border-bottom:none}
+td .pill{display:inline-block;font-size:11.5px;border-radius:5px;padding:1px 8px;margin-bottom:3px}
+.pill.func{background:var(--teal-soft);color:var(--teal)}
+.pill.avail{background:var(--amber-soft);color:#9a6a17}
+.pill.perf{background:var(--blue-soft);color:var(--blue)}
+.pill.iface{background:#e7f0f5;color:var(--steel)}
+td small{color:var(--ink-soft)}
+.req-list{display:grid;gap:12px}
+.req{border:1px solid var(--line);border-radius:11px;padding:15px 17px;background:#fcfdfe}
+.req .req-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:5px}
+.req .rid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--steel);font-weight:600}
+.req .rpri{font-size:11px;border-radius:5px;padding:1px 8px}
+.rpri.h{background:var(--red-soft);color:var(--red)}
+.rpri.m{background:var(--amber-soft);color:#9a6a17}
+.rpri.l{background:#eef2f5;color:var(--ink-soft)}
+.req .rtext{font-size:14px;color:var(--ink)}
+.req .rwhy{font-size:12.5px;color:var(--ink-soft);margin-top:4px}
+.req .rwhy::before{content:"依据：";color:var(--steel)}
+.req .rtrace{font-size:12px;color:var(--steel);margin-top:3px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.view-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.view{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff}
+.view h5{font-size:15px;color:var(--navy);margin-bottom:10px;display:flex;gap:8px;align-items:center}
+.view h5 .vbadge{font-size:11px;color:#fff;background:var(--steel);border-radius:5px;padding:2px 8px;font-weight:500}
+.view p,.view li{font-size:13.5px;color:var(--ink-soft)}
+.view ul{padding-left:18px}
+.view ul li{margin-bottom:6px}
+.fbs{margin:10px 0}
+.fbs .lvl{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.fbs .lvl:last-child{border-bottom:none}
+.fbs .lvl .lv{font-weight:700;color:var(--navy);font-size:13.5px}
+.fbs .lvl .lv small{display:block;font-weight:400;color:var(--ink-soft);font-size:11.5px}
+.fbs .nodes{display:flex;flex-wrap:wrap;gap:8px}
+.fbs .node{border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:13px;background:#fcfdfe}
+.fbs .node b{color:var(--navy)}
+.fbs .node.sub{background:var(--teal-soft);border-color:#c4e2dc}
+.diagram{border:1px solid var(--line);border-radius:14px;background:#fff;padding:22px;margin:16px 0;overflow-x:auto}
+.diagram .cap{font-size:13px;color:var(--ink-soft);margin-top:10px;text-align:center}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 4px;font-size:12.5px;color:var(--ink-soft)}
+.legend .lg{display:flex;align-items:center;gap:6px}
+.legend .sw{width:16px;height:12px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.15)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:18px;background:#fff}
+.kpi .v{font-family:"Noto Serif SC",serif;font-size:20px;font-weight:700;color:var(--navy)}
+.kpi .k{font-size:12.5px;color:var(--ink-soft);margin-top:3px}
+footer{margin-top:50px;background:var(--navy);color:#cddce6;padding:30px 0;font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer b{color:#fff}
+.note{font-size:12.5px;color:var(--ink-soft);background:var(--paper);border-radius:9px;padding:11px 14px;margin-top:12px}
+.note b{color:var(--ink)}
+.loading{padding:60px 0;text-align:center;color:var(--ink-soft);font-size:14px}
+@media (max-width:860px){.view-grid,.req-map{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.fbs .lvl{grid-template-columns:1fr;gap:6px}.hero h1{font-size:27px}col.c-int{width:30%}}
+@media print{nav.toc{display:none}body{background:#fff}.card,.view,.req,.diagram{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="kicker">小组作业 3 · 系统需求分析与架构定义</div>
+    <h1>面向高阶智能驾驶的线控底盘系统<br>系统需求规格书（SyRS）· 初始系统架构 · 控制框图 · 安全需求与安全架构</h1>
+    <p class="lead">围绕小组所选系统「面向高阶智能驾驶的线控底盘系统」，结合小组讨论与 AI 问答，按 ISO/IEC/IEEE 29148:2018（参考资料表 5-1 SyRS 范例）完成系统需求分析与架构定义；并基于初始系统架构开展系统理论过程分析（STPA），得出安全需求与安全架构。</p>
+    <div class="hero-meta">
+      <div class="chip">系统对象（SoI）：<b>高阶智驾线控底盘系统</b></div>
+      <div class="chip">标准依据：<b>ISO/IEC/IEEE 15288 · 29148 · 26262 · 21448</b></div>
+      <div class="chip">上游追溯：<b>作业1 六层分解 · 作业2 BRS/StRS</b></div>
+      <div class="chip">交付形式：<b>HTML 网页</b></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">概述与作业对照</a>
+    <a href="#syrs">SyRS 系统需求规格书</a>
+    <a href="#arch">初始系统架构</a>
+    <a href="#control">系统控制框图</a>
+    <a href="#safety">安全需求与安全架构</a>
+    <a href="#verify">验证与追溯</a>
+  </div>
+</nav>
+
+<div class="wrap" id="app">
+  <div class="loading">正在加载作业内容…（若长时间无显示，请通过 GitHub Pages 在线地址访问）</div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div><b>面向高阶智能驾驶的线控底盘系统</b> · SyRS 需求规格书与初始系统架构</div>
+    <div>依据 ISO/IEC/IEEE 15288 · 29148 · 26262 框架编制 · 小组作业 3</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var app = document.getElementById('app');
+  var parts = ['a3-p1.html','a3-p2.html','a3-p3.html','a3-p4.html'];
+  async function load(){
+    for(var i=0;i<parts.length;i++){
+      var res = await fetch(parts[i], {cache:'no-cache'});
+      if(!res.ok) throw new Error(parts[i]+' '+res.status);
+      var html = await res.text();
+      app.insertAdjacentHTML('beforeend', html);
+    }
+    var ld = app.querySelector('.loading'); if(ld) ld.remove();
+    initSpy();
+  }
+  function initSpy(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var sections = Object.keys(map).map(function(id){ return document.getElementById(id); }).filter(Boolean);
+    if(!('IntersectionObserver' in window)) return;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.style.background=''; a.style.color=''; });
+          var a = map[e.target.id];
+          if(a){ a.style.background='var(--navy)'; a.style.color='#fff'; }
+        }
+      });
+    }, { rootMargin:'-30% 0px -60% 0px' });
+    sections.forEach(function(s){ obs.observe(s); });
+  }
+  load().catch(function(err){
+    app.innerHTML = '<div class="loading">内容加载失败：'+err.message+'。请通过 GitHub Pages 在线地址访问本页。</div>';
+  });
+})();
+</script>
+
+</body>
+</html>
