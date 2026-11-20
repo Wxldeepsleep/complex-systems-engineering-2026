@@ -1,0 +1,97 @@
+<section id="arch">
+  <div class="sec-head"><span class="sec-num">02</span><h2>初始系统架构</h2></div>
+  <p class="sec-sub">依据第 5.2 节系统架构定义过程：架构是系统在其环境中的基本概念，定义系统的结构、行为与不同视角的概念模型。初始架构从功能、逻辑、物理、接口四个视图描述「由哪些元素、如何互连来满足系统需求」，不深入具体零部件设计。</p>
+  <div class="card">
+    <h4>架构设计原则 <span class="tag">Architecture Principles</span></h4>
+    <ul>
+      <li><b>安全优先：</b>安全相关功能独立设计、独立监控，输出先校验后执行。</li>
+      <li><b>冗余独立：</b>关键转向 / 制动通路在电源、通信、控制器上相互独立，单点失效不共因。</li>
+      <li><b>解耦协同：</b>纵向 / 横向 / 垂向控制解耦，由域控统一协调，避免执行动作互相干扰。</li>
+      <li><b>可观测可编程：</b>全链路状态可测、可诊断，执行特性由软件定义、可标定迭代。</li>
+      <li><b>平台可演进：</b>预留向域集中 / 中央计算 + 区域控制架构演进的接口与算力。</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>2.1 功能架构 <span class="tag">FBS 功能分解结构</span></h4>
+    <p>顶层核心功能 F0「把上层运动目标闭环转化为车辆可控的力与运动」，向下分解为六组功能，每组功能分配对应 FR 需求：</p>
+    <div class="fbs">
+      <div class="lvl"><div class="lv">F0 顶层<small>闭环执行总功能</small></div><div class="nodes"><span class="node"><b>F0</b> 目标 → 力与运动闭环转化（FR-01~FR-09 汇总）</span></div></div>
+      <div class="lvl"><div class="lv">F1 指令层<small>输入处理</small></div><div class="nodes"><span class="node sub">F1.1 智驾目标接收与解析（FR-01）</span><span class="node sub">F1.2 驾驶员操作采集（FR-01 / FR-08）</span><span class="node sub">F1.3 指令合法性校验（SEC-02）</span></div></div>
+      <div class="lvl"><div class="lv">F2 感知层<small>状态融合</small></div><div class="nodes"><span class="node sub">F2.1 轮速 / 转角 / 压力 / 电流采集（FR-02）</span><span class="node sub">F2.2 车辆状态与附着估计（FR-02 / FR-03）</span></div></div>
+      <div class="lvl"><div class="lv">F3 协调层<small>控制分配</small></div><div class="nodes"><span class="node sub">F3.1 横 / 纵 / 垂向控制量协调（FR-03）</span><span class="node sub">F3.2 人机指令仲裁与切换（FR-08）</span><span class="node sub">F3.3 附着极限约束限幅（FR-03 / SR-05）</span></div></div>
+      <div class="lvl"><div class="lv">F4 执行层<small>动作输出</small></div><div class="nodes"><span class="node sub">F4.1 线控转向执行（FR-04）</span><span class="node sub">F4.2 线控制动执行（FR-05）</span><span class="node sub">F4.3 线控驱动协调（FR-06）</span><span class="node sub">F4.4 悬架姿态协调（FR-07）</span></div></div>
+      <div class="lvl"><div class="lv">F5 反馈层<small>闭环回传</small></div><div class="nodes"><span class="node sub">F5.1 执行状态闭环（FR-02 / PR-01）</span><span class="node sub">F5.2 状态 / 健康度回传智驾域（IR-E-01）</span></div></div>
+      <div class="lvl"><div class="lv">F6 安全层<small>监控降级</small></div><div class="nodes"><span class="node sub">F6.1 输出合理性与通路健康监控（FR-09）</span><span class="node sub">F6.2 冗余切换与分级降级（FR-09 / PR-06）</span><span class="node sub">F6.3 诊断记录与告警（FR-10）</span></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>2.2 逻辑架构 <span class="tag">控制闭环与逻辑元素</span></h4>
+    <p>逻辑架构描述功能如何在逻辑元素间流动，形成「目标 → 协调算法 → 执行 → 车辆对象 → 状态估计 → 反馈」的闭环；逻辑元素与物理实现解耦：</p>
+    <div class="view-grid">
+      <div class="view"><h5><span class="vbadge">LE-1</span>指令解析逻辑元素</h5><p>接收 F1 两路输入，完成格式解析、权限判定与合法性校验，输出统一内部目标量。</p></div>
+      <div class="view"><h5><span class="vbadge">LE-2</span>状态估计逻辑元素</h5><p>融合 F2 传感信号，输出车辆状态向量与附着估计，供协调算法使用。</p></div>
+      <div class="view"><h5><span class="vbadge">LE-3</span>协调控制逻辑元素</h5><p>运行车辆动力学协调控制算法（Control Algorithm），完成 F3 分配与人机仲裁。</p></div>
+      <div class="view"><h5><span class="vbadge">LE-4</span>执行驱动逻辑元素</h5><p>把协调量转换为四个执行子系统的闭环驱动指令（F4）。</p></div>
+      <div class="view"><h5><span class="vbadge">LE-5</span>安全监控逻辑元素</h5><p>独立校核 LE-3 输出与通路健康，触发冗余切换、降级与告警（F6）。</p></div>
+      <div class="view"><h5><span class="vbadge">LE-6</span>车辆过程模型</h5><p>被控对象模型（Process Model）：执行器 + 整车动力学 + 轮胎路面，反馈状态给 LE-2。</p></div>
+    </div>
+    <div class="note">逻辑闭环：LE-1 → LE-3（目标）→ LE-4 → LE-6（车辆）→ LE-2（状态估计）→ 回 LE-3 形成反馈；LE-5 旁路监控整条链路。该闭环即第 03 章控制框图的内部展开。</div>
+  </div>
+  <div class="card">
+    <h4>2.3 物理架构 <span class="tag">元素、布置与冗余拓扑</span></h4>
+    <div class="diagram">
+      <svg viewBox="0 0 920 560" width="100%" role="img" aria-label="线控底盘物理架构图">
+        <defs><marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2f6f8f"/></marker><marker id="arrR" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#b4463a"/></marker></defs>
+        <rect x="20" y="30" width="180" height="56" rx="8" fill="#e8eef6" stroke="#3a6ea5"/><text x="110" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#123a5c">智驾域 / 驾驶员</text><text x="110" y="74" text-anchor="middle" font-size="11" fill="#3c4a57">目标指令 / 操作输入</text>
+        <rect x="720" y="30" width="180" height="56" rx="8" fill="#e8eef6" stroke="#3a6ea5"/><text x="810" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#123a5c">VCU / BMS / HMI / 车云</text><text x="810" y="74" text-anchor="middle" font-size="11" fill="#3c4a57">能量状态 / 告警 / 诊断</text>
+        <rect x="260" y="120" width="400" height="150" rx="12" fill="#123a5c"/><text x="460" y="146" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">底盘域控制器（VDC）</text>
+        <rect x="282" y="160" width="170" height="44" rx="7" fill="#1d557f"/><text x="367" y="187" text-anchor="middle" font-size="12.5" fill="#fff">主控 MCU / SoC</text>
+        <rect x="468" y="160" width="170" height="44" rx="7" fill="#1d557f"/><text x="553" y="187" text-anchor="middle" font-size="12.5" fill="#fff">安全监控 Safety MCU</text>
+        <rect x="282" y="216" width="170" height="38" rx="7" fill="#2f6f8f"/><text x="367" y="240" text-anchor="middle" font-size="12" fill="#fff">通信网关 CAN FD / 以太网</text>
+        <rect x="468" y="216" width="170" height="38" rx="7" fill="#2f6f8f"/><text x="553" y="240" text-anchor="middle" font-size="12" fill="#fff">电源监控 / 看门狗 / 双电源</text>
+        <rect x="60" y="340" width="180" height="70" rx="10" fill="#e2f1ee" stroke="#2e8b7f"/><text x="150" y="368" text-anchor="middle" font-size="13" font-weight="700" fill="#1f6f65">线控转向 SBW</text><text x="150" y="388" text-anchor="middle" font-size="11" fill="#3c4a57">转向电机 + 路感 + 冗余绕组</text>
+        <rect x="270" y="340" width="180" height="70" rx="10" fill="#e2f1ee" stroke="#2e8b7f"/><text x="360" y="368" text-anchor="middle" font-size="13" font-weight="700" fill="#1f6f65">线控制动 BBW</text><text x="360" y="388" text-anchor="middle" font-size="11" fill="#3c4a57">建压单元 + 冗余备份制动</text>
+        <rect x="480" y="340" width="180" height="70" rx="10" fill="#e2f1ee" stroke="#2e8b7f"/><text x="570" y="368" text-anchor="middle" font-size="13" font-weight="700" fill="#1f6f65">线控驱动协调</text><text x="570" y="388" text-anchor="middle" font-size="11" fill="#3c4a57">扭矩响应 / 防滑 / 回收协调</text>
+        <rect x="690" y="340" width="180" height="70" rx="10" fill="#e2f1ee" stroke="#2e8b7f"/><text x="780" y="368" text-anchor="middle" font-size="13" font-weight="700" fill="#1f6f65">悬架姿态协调</text><text x="780" y="388" text-anchor="middle" font-size="11" fill="#3c4a57">CDC / ECAS 阻尼高度调节</text>
+        <rect x="270" y="455" width="380" height="52" rx="10" fill="#f7e7e4" stroke="#b4463a" stroke-dasharray="6 4"/><text x="460" y="478" text-anchor="middle" font-size="13" font-weight="700" fill="#b4463a">冗余备份通路（独立电源 / 独立通信 / 备份执行）</text><text x="460" y="497" text-anchor="middle" font-size="11" fill="#3c4a57">主通路失效时由备份维持基本可控并进入降级</text>
+        <line x1="200" y1="58" x2="260" y2="150" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#arr)"/>
+        <line x1="660" y1="150" x2="720" y2="58" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#arr)"/>
+        <line x1="367" y1="270" x2="150" y2="340" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#arr)"/>
+        <line x1="380" y1="270" x2="360" y2="340" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#arr)"/>
+        <line x1="540" y1="270" x2="570" y2="340" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#arr)"/>
+        <line x1="560" y1="270" x2="780" y2="340" stroke="#2f6f8f" stroke-width="1.6" marker-end="url(#arr)"/>
+        <line x1="150" y1="410" x2="360" y2="455" stroke="#b4463a" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#arrR)"/>
+        <line x1="360" y1="410" x2="400" y2="455" stroke="#b4463a" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#arrR)"/>
+        <line x1="570" y1="410" x2="520" y2="455" stroke="#b4463a" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#arrR)"/>
+      </svg>
+      <div class="cap">图 2-1 初始物理架构：底盘域控制器集中协调 + 四执行子系统分布式布置 + 独立冗余备份通路</div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>2.4 接口架构 <span class="tag">外部交互清单</span></h4>
+    <div class="table-box"><table>
+      <colgroup><col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need"></colgroup>
+      <thead><tr><th>接口</th><th>外部系统</th><th>方向</th><th>主要信号 / 数据</th><th>承载</th></tr></thead>
+      <tbody>
+        <tr><td>IF-1</td><td>智驾域</td><td>双向</td><td>目标加速度 / 转角 / 横摆；执行状态与健康度</td><td>CAN FD / 车载以太网</td></tr>
+        <tr><td>IF-2</td><td>驾驶员 / HMI</td><td>双向</td><td>操作信号；状态、告警、接管请求</td><td>内部总线 + 仪表</td></tr>
+        <tr><td>IF-3</td><td>VCU / 动力域 / BMS</td><td>双向</td><td>扭矩请求；电压、电池与能量状态</td><td>CAN</td></tr>
+        <tr><td>IF-4</td><td>车云 / OTA / 诊断</td><td>双向</td><td>故障码、版本、运行数据；升级包</td><td>诊断接口 / 云通道（加密）</td></tr>
+        <tr><td>IF-5</td><td>整车供电</td><td>输入</td><td>12V / 48V / 高压协同供电，关键件双电源</td><td>电源母线</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h4>2.5 备选架构与权衡 <span class="tag">Architecture Trade-off</span></h4>
+    <div class="table-box"><table>
+      <colgroup><col class="c-id"><col class="c-name"><col class="c-type"><col class="c-int"><col class="c-need"></colgroup>
+      <thead><tr><th>方案</th><th>描述</th><th>优点</th><th>局限</th><th>结论</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>分布式 ECU 各自独立控制</td><td>技术成熟、单点改动影响小</td><td>横纵协同弱、冗余与仲裁分散、线束复杂</td><td>不满足高阶智驾协同要求</td></tr>
+        <tr><td>B</td><td>底盘域控制器集中协调（本方案）</td><td>统一仲裁与协调、冗余集中设计、软件可迭代</td><td>域控本身需高可靠与安全监控</td><td><b>选用</b>：匹配平台需求与演进路线</td></tr>
+        <tr><td>C</td><td>区域控制器直接执行（中央计算 + 区域）</td><td>线束最精简、面向远期 E/E 架构</td><td>当前供应链与成熟度不足</td><td>预留接口，作为演进方向</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note">权衡依据：安全（冗余独立性）、协同（横纵垂统一分配）、成本（平台复用）、可演进（接口预留）四项准则综合评分，方案 B 胜出；域控内部以「主控 + 独立 Safety MCU」应对自身可靠性风险。</div>
+  </div>
+</section>
