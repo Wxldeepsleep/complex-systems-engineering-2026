@@ -265,3 +265,980 @@ td .id{font-weight:700;color:var(--primary2);white-space:nowrap}
     </div>
   </div>
 </section>
+
+<!-- ============ 7 · 上层要素 ============ -->
+<section class="slide" data-part="2">
+  <div class="kicker">Part 2 · 作业 1 层级分解</div>
+  <h2>上层要素：任务 · 体系 · 整机</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card">
+        <h3><span class="no">Mission</span>任务层</h3>
+        <ul class="tight">
+          <li><b>安全出行运输</b>：城市 / 高速 / 园区内可靠完成人员运输与配送</li>
+          <li><b>高阶智驾落地</b>：无人工接管条件下连续稳定运行</li>
+          <li><b>全域运动操控</b>：精确完成加减速、转向、制动、平顺性调节</li>
+          <li><b>失效兜底</b>：任一链路失效仍可降级行驶或安全停车</li>
+          <li><b>节能与舒适</b>：降低能耗、提升平顺性与乘坐品质</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="no">SoS</span>体系层</h3>
+        <ul class="tight">
+          <li>自动驾驶整车系统族：乘用车 / Robotaxi / 物流车共享平台</li>
+          <li>感知—决策—规划系统：摄像头 / 雷达 / 高精地图 / 域控</li>
+          <li>动力与能源系统：三电、能量与热管理</li>
+          <li>车身与座舱系统：结构、乘员舱、被动安全</li>
+          <li>车路云协同：V2X、云控调度、OTA 与远程诊断</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="no">Vehicles</span>整机层</h3>
+        <ul class="tight">
+          <li>自动驾驶乘用车：城市道路与高速场景</li>
+          <li>Robotaxi 无人出租车：对冗余与可靠性要求最高</li>
+          <li>自动驾驶物流车 / 卡车：大载荷、长续航</li>
+          <li>集成要素：轴距 / 轮距、整车质量、轴荷分配、离地间隙、安装接口与布置空间</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <p><b>SoS 关键特征：</b>各成员系统原本可独立运行、独立演进，通过标准化接口耦合为整体；高阶自动驾驶这一整体能力无法由任一成员单独实现，属于<b>涌现能力（Emergent Capability）</b>。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 · 本层系统 ============ -->
+<section class="slide" data-part="2">
+  <div class="kicker">Part 2 · 作业 1 层级分解</div>
+  <h2>本层：线控底盘平台 <span class="sub">分析主体</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="two-col">
+      <div class="card">
+        <h3>系统层要素（SY1–SY6）</h3>
+        <table>
+          <thead><tr><th>编号</th><th>系统能力域</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td class="id">SY1</td><td>线控制动</td><td>EHB / EMB 电信号制动与冗余制动</td></tr>
+            <tr><td class="id">SY2</td><td>线控转向</td><td>转向执行与路感反馈解耦，支持转向冗余备份</td></tr>
+            <tr><td class="id">SY3</td><td>线控驱动 / 扭矩控制</td><td>扭矩分配、牵引力控制与纵向运动执行</td></tr>
+            <tr><td class="id">SY4</td><td>主动悬架与姿态</td><td>减振、侧倾 / 俯仰抑制、高度与刚度调节</td></tr>
+            <tr><td class="id">SY5</td><td>底盘域控制器</td><td>策略运行、子系统协调、通信网关、诊断管理</td></tr>
+            <tr><td class="id">SY6</td><td>冗余与功能安全架构</td><td>双路供电 / 通信 / 执行通道与失效降级策略</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid" style="grid-template-rows:auto 1fr;gap:14px">
+        <div class="card">
+          <h3>输入 / 输出 / 约束</h3>
+          <p><b>输入：</b>目标加速度 / 转角 / 横摆角速度 / 姿态、模式切换与诊断请求。<br>
+          <b>输出：</b>实际加速度、转角、横摆响应、车身姿态、执行器状态与健康度、故障码。<br>
+          <b>约束：</b>ISO 26262 / 21448 / 21434，控制周期毫秒级。</p>
+        </div>
+        <div class="card">
+          <h3>核心特性</h3>
+          <ul class="tight">
+            <li><b>解耦：</b>纵 / 横 / 垂向动力学解耦，避免动作互相干扰</li>
+            <li><b>冗余：</b>双电源、双通信、双执行链路，单点失效可降级</li>
+            <li><b>可观测：</b>全链路状态可测、可诊断、可标定</li>
+            <li><b>可编程：</b>响应速度、阻尼、路感由软件定义、可迭代</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 · 下层子系统与模块 ============ -->
+<section class="slide" data-part="2">
+  <div class="kicker">Part 2 · 作业 1 层级分解</div>
+  <h2>下层分解：子系统与模块</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card">
+      <h3>六大子系统（Sub-systems）</h3>
+      <div class="grid g3" style="gap:12px">
+        <div><p><span class="tag blue">SBW 线控转向</span></p><p class="note">齿条助力电机、路感电机、转角 / 推力传感器、备份转向通道</p></div>
+        <div><p><span class="tag blue">BBW 线控制动</span></p><p class="note">EMB 卡钳 / 液压调节器、踏板模拟器、压力传感器、备份制动回路、EPB</p></div>
+        <div><p><span class="tag blue">线控驱动</span></p><p class="note">电机控制器 MCU、减速器、扭矩矢量分配与 TCS、能量回收协调</p></div>
+        <div><p><span class="tag blue">主动悬架</span></p><p class="note">空气弹簧 / CDC 阀、作动器、高度与姿态传感器，侧倾俯仰抑制</p></div>
+        <div><p><span class="tag blue">底盘域控 DCU</span></p><p class="note">SoC+MCU、CAN / 以太网网关、双源电源、监控诊断单元</p></div>
+        <div><p><span class="tag blue">安全冗余监控</span></p><p class="note">独立监控器、双通道一致性比对、故障降级仲裁、MRM 触发</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>模块层（Modules）· 最小可独立设计 / 制造 / 验证单元</h3>
+      <p>制动踏板 / 轮速 / 压力传感器 · 液压阀组 / 电磁阀 · 转向角与齿条位置传感器 · 转向力矩电机 · 电机逆变器 MCU · 空簧 / 减振阀体 · 高度传感器 · 域控电路板 / 功率板 · 通信收发芯片 · 继电器 / 熔断器 · 控制算法软件模块（制动 / 转向 / 扭矩 / 悬架策略与功能安全软件）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · 层级串联 ============ -->
+<section class="slide" data-part="2">
+  <div class="kicker">Part 2 · 作业 1 层级分解</div>
+  <h2>层级串联：自顶向下与自底向上</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card" style="background:#f7fafc">
+      <h3>自顶向下：任务驱动分解</h3>
+      <div class="chain">
+        <div class="step"><div class="t">出行任务</div><div class="d">为什么跑</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">自动驾驶体系</div><div class="d">和谁一起跑</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">整车</div><div class="d">装在哪台车</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">线控底盘平台</div><div class="d">怎么执行运动</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">底盘子系统</div><div class="d">哪些单元执行</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">硬件 / 软件模块</div><div class="d">靠什么落地</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>自底向上：能力汇聚支撑任务</h3>
+      <p>模块采集信号、输出力矩与动作 → 子系统完成功能闭环 → 系统实现整车运动控制 → 整机融入体系 → 完成既定出行任务。</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--accent)">
+      <p><b>层级判断：</b>线控底盘平台本身由多个可独立设计、验证的子系统集成而成；不能单独完成载客物流任务，必须装到整车、并入出行体系才能发挥价值；在整车拓扑中与动力、车身、智驾、座舱等系统并列——因此定位在<b>系统（Systems）层</b>。任一层失效都会沿层级向上影响任务，底盘必须在子系统与模块层面做到故障可检测、降级可运行。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 · 分隔 Part 3 ============ -->
+<section class="slide divider" data-part="3">
+  <div class="part-no">PART 03 · 小组作业 2（上）</div>
+  <h2>BRS 业务需求与 ConOps 运营概念</h2>
+  <div class="desc">依据 ISO/IEC/IEEE 29148:2018 表 4-1，从组织 / 业务管理视角定义业务环境、目的目标、业务模型与业务运行需求，并以 ConOps 描述系统将如何被用来运营。</div>
+  <div class="chips"><span>业务目的与范围</span><span>业务管理需求</span><span>业务运行需求</span><span>ConOps</span></div>
+</section>
+
+<!-- ============ 12 · BRS 简介 ============ -->
+<section class="slide" data-part="3">
+  <div class="kicker">Part 3 · 作业 2 BRS / ConOps</div>
+  <h2>BRS 业务需求规格说明 · 简介</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card">
+        <h3>1.1 业务目的</h3>
+        <p>出行运营企业需在限定 ODD 部署 L4 无人车队以降低人工驾驶成本、提升运营安全与准点率。传统机械 / 液压底盘无法直接接收电子指令，也不具备双冗余与故障降级能力，无法支撑「驾驶员缺失」场景。本业务构建标准化、可跨车型复用的<b>线控底盘平台</b>，作为整车厂与自动驾驶公司之间的通用执行底座，缩短新车型开发周期、降低单车成本。</p>
+      </div>
+      <div class="card">
+        <h3>1.2 业务范围</h3>
+        <ul class="tight">
+          <li><b>业务域：</b>自动驾驶车辆底盘开发与供应链业务域</li>
+          <li><b>业务活动：</b>需求定义、开发验证、量产交付、在役运维与 OTA 升级；覆盖 OEM、AD 供应商、零部件 Tier1 三方协同</li>
+          <li><b>系统范围：</b>线控底盘平台（含 6 大子系统）；不含感知 / 决策算法、车身内外饰，通过标准车载接口交互</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>1.3 业务概况</h3>
+        <p>上游为 OEM 整车项目与 AD 公司自动驾驶栈；中游为本线控底盘平台；下游为充电运维场站与云控监控平台。外部监管包括 GB 自动驾驶相关标准、ISO 26262、ISO 21448 SOTIF、UN R155/R156 网络安全与软件升级。</p>
+      </div>
+      <div class="card">
+        <h3>1.4 关键定义</h3>
+        <ul class="tight">
+          <li><b>线控（By-wire）：</b>以电信号代替机械 / 液压连接传递控制指令</li>
+          <li><b>ODD：</b>设计运行范围（Operational Design Domain）</li>
+          <li><b>EMB：</b>电子机械制动（Electro-Mechanical Brake）</li>
+          <li><b>ConOps / OpsCon：</b>运营概念 / 运行概念</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13 · 业务管理需求 ============ -->
+<section class="slide" data-part="3">
+  <div class="kicker">Part 3 · 作业 2 BRS / ConOps</div>
+  <h2>业务管理需求 <span class="sub">环境 · 使命目标 · 模型 · 信息环境</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card">
+        <h3>3.1 业务环境</h3>
+        <p><b>外部：</b>L4 政策试点扩围、Robotaxi 商业化提速，线控底盘成为强制性技术门槛。<br>
+        <b>内部：</b>企业已有机械底盘产线，需新建 EMB / SBW 装配与标定能力。<br>
+        <b>技术基础：</b>车载以太网、区域控制器、AUTOSAR Adaptive 已趋成熟。</p>
+      </div>
+      <div class="card">
+        <h3>3.2 使命、目的与目标</h3>
+        <p><b>使命：</b>成为 L4 无人车可信赖的执行底座。</p>
+        <div class="kpis" style="grid-template-columns:repeat(3,1fr);margin-top:10px">
+          <div class="kpi"><div class="num">≥3 款</div><div class="lab">平台覆盖车型</div></div>
+          <div class="kpi"><div class="num">≥10000 台</div><div class="lab">累计装配</div></div>
+          <div class="kpi"><div class="num">0</div><div class="lab">重大安全事故</div></div>
+        </div>
+        <p class="note" style="margin-top:8px">单车开发周期缩短 30%。</p>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>3.3 业务模型</h3>
+        <p>向 OEM 按平台授权 + 按车收费；向 AD 公司提供标准接口与联合标定服务；后市场提供 OTA 订阅、健康度预测与备件服务。</p>
+      </div>
+      <div class="card">
+        <h3>3.4 信息环境</h3>
+        <p>统一底盘数据字典与信号矩阵；与整车 PLM、ALM 打通；在役车辆底盘状态数据回传云控平台，用于预测性维护。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14 · 业务运行需求 ============ -->
+<section class="slide" data-part="3">
+  <div class="kicker">Part 3 · 作业 2 BRS / ConOps</div>
+  <h2>业务运行需求</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card">
+      <h3>4.1 业务过程</h3>
+      <div class="chain">
+        <div class="step"><div class="t">需求冻结</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">平台开发</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">台架 / 整车验证</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">SOP 量产</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">在役监控</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">OTA 迭代</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="t">报废回收</div></div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>4.2 运营策略与规则</h3>
+        <ul class="tight">
+          <li><b>B-RULE-01：</b>任何影响安全的需求变更必须经 FMEA / FTA 复审后方可发布</li>
+          <li><b>B-RULE-02：</b>OTA 升级满足 UN R156，分批灰度、可回滚</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>4.3 运行约束</h3>
+        <ul class="tight">
+          <li>−40℃ ~ +85℃ 车规环境工作</li>
+          <li>指令响应到执行输出端总延迟 ≤ 50 ms</li>
+          <li>关键链路必须双冗余</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>4.4 运行质量</h3>
+        <p>底盘平台可用性 ≥ 99.99%；平均无故障里程 ≥ 10000 km；乘客体感横向加速度波动 ≤ 0.05 g。</p>
+      </div>
+      <div class="card">
+        <h3>4.5 业务结构 / 项目约束</h3>
+        <p>按转向 / 制动 / 驱动 / 悬架 / 域控 / 安全六个事业部横向开发，与 OEM 项目组纵向矩阵对接。预算 ≤ 4.5 亿元；2027 年 SOP；兼容现有纯电底盘产线。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15 · ConOps ============ -->
+<section class="slide" data-part="3">
+  <div class="kicker">Part 3 · 作业 2 BRS / ConOps</div>
+  <h2>ConOps 运营概念 <span class="sub">站在运营企业视角</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card">
+        <h3>运营政策与约束</h3>
+        <ul class="tight">
+          <li>仅在已公示 ODD（城市核心区、指定天气与光照）内开放付费载人</li>
+          <li>每 10 台车配置 1 名远程安全员，7×24 小时值班</li>
+          <li>任何 ASIL-D 故障车辆必须立即退出运营队列</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>系统描述</h3>
+        <p>线控底盘平台作为整车「执行底座」，向上提供标准横纵向控制接口，向下驱动转向 / 制动 / 驱动 / 悬架执行器，并自带冗余与安全监控。</p>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <h3>运行模式</h3>
+        <p>M1 全自动 / M2 远程接管 / M3 最小风险 / M4 维保，状态机详见讲者 4 部分。</p>
+      </div>
+      <div class="card">
+        <h3>用户类型</h3>
+        <p>乘客（无驾驶权）、远程安全员、维保技师、OEM / AD 开发工程师。</p>
+      </div>
+      <div class="card">
+        <h3>支持环境</h3>
+        <p>云控平台 + 高精地图 + V2X 路侧单元 + 充换电站 + 移动维保车队。</p>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--primary2)">
+      <p><b>ConOps vs OpsCon：</b>ConOps 在组织 / 体系层面描述「系统将如何被用来做生意」，面向多系统组合的体系，描述多对多交互；OpsCon 针对车辆 / 系统本身，描述一次具体任务中底盘如何动作（见讲者 4）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 16 · 分隔 Part 4 ============ -->
+<section class="slide divider" data-part="4">
+  <div class="part-no">PART 04 · 小组作业 2（下）</div>
+  <h2>StRS 相关方需求与 OpsCon 运行概念</h2>
+  <div class="desc">依据表 4-5 框架识别相关方并分析影响力 / 关心度，把各方期望转化为可验证、可追溯的相关方需求；以 OpsCon 描述一次 Robotaxi 接驳全过程的底盘动作。</div>
+  <div class="chips"><span>相关方矩阵</span><span>StRS 需求条目</span><span>运行模式</span><span>OpsCon 时序</span></div>
+</section>
+
+<!-- ============ 17 · 相关方列表 ============ -->
+<section class="slide" data-part="4">
+  <div class="kicker">Part 4 · 作业 2 StRS / OpsCon</div>
+  <h2>相关方列表与影响力分析</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:80px">编号</th><th>相关方</th><th>角色 / 关注点</th><th style="width:80px">影响力</th><th style="width:80px">关心度</th></tr></thead>
+      <tbody>
+        <tr><td class="id">SH-01</td><td>OEM 整车项目组</td><td>平台可集成性、成本、SOP 节点</td><td>高</td><td>高</td></tr>
+        <tr><td class="id">SH-02</td><td>自动驾驶公司（AD 供应商）</td><td>接口标准、控制精度、延迟、可预测性</td><td>高</td><td>高</td></tr>
+        <tr><td class="id">SH-03</td><td>乘客</td><td>乘坐舒适性、安全感、噪音</td><td>中</td><td>高</td></tr>
+        <tr><td class="id">SH-04</td><td>车队运营方 / Robotaxi 公司</td><td>出勤率、能耗、维保成本</td><td>高</td><td>中</td></tr>
+        <tr><td class="id">SH-05</td><td>远程接管安全员（云驾舱）</td><td>接管响应时延、人机交互可靠性</td><td>中</td><td>高</td></tr>
+        <tr><td class="id">SH-06</td><td>底盘零部件 Tier1 / Tier2</td><td>供货一致性、变更管理</td><td>中</td><td>中</td></tr>
+        <tr><td class="id">SH-07</td><td>认证与监管机构</td><td>功能安全、网络安全、准入合规</td><td>高</td><td>中</td></tr>
+        <tr><td class="id">SH-08</td><td>保险 / 法务</td><td>事故责任界定、数据可追溯</td><td>中</td><td>中</td></tr>
+        <tr><td class="id">SH-09</td><td>售后 / 维保网络</td><td>诊断接口、故障可读性、备件</td><td>低</td><td>中</td></tr>
+        <tr><td class="id">SH-10</td><td>行人 / 其他交通参与者</td><td>车辆可预测行为、声音提示</td><td>低</td><td>高</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 18 · StRS 需求条目 ============ -->
+<section class="slide" data-part="4">
+  <div class="kicker">Part 4 · 作业 2 StRS / OpsCon</div>
+  <h2>相关方需求条目（StRS 摘要）</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:120px">需求编号</th><th>需求描述</th><th style="width:130px">来源</th><th style="width:200px">验收判据</th></tr></thead>
+      <tbody>
+        <tr><td class="id">StRS-PERF-01</td><td>目标横向加速度指令后，轮端实际横向加速度跟踪误差 ≤ 0.05 g，相位滞后 ≤ 30 ms</td><td>SH-02</td><td>蛇形 / 双移线台架 + 实车测试</td></tr>
+        <tr><td class="id">StRS-PERF-02</td><td>100→0 km/h 紧急制动距离 ≤ 40 m，制动过程不触发非预期横摆</td><td>SH-02 / 07</td><td>干燥沥青路面实测</td></tr>
+        <tr><td class="id">StRS-SAFE-01</td><td>任一单个传感器 / 执行器 / 控制器失效，200 ms 内进入降级模式，整车仍可安全停车（ASIL-D）</td><td>SH-07 / 04</td><td>FMEA + 故障注入台架</td></tr>
+        <tr><td class="id">StRS-SAFE-02</td><td>SBW / BBW 具备机械 / 液压备份，主链路断电后备份回路仍可实现最小转向与制动</td><td>SH-07</td><td>断电注入测试</td></tr>
+        <tr><td class="id">StRS-COMF-01</td><td>常规工况纵向加加速度（jerk）≤ 2.5 m/s³，乘客无明显顿挫感</td><td>SH-03</td><td>主观评分 ≥ 4/5 + 加速度传感器</td></tr>
+        <tr><td class="id">StRS-LAT-01</td><td>远程接管指令从云驾舱发出到车辆开始响应总延迟 ≤ 300 ms</td><td>SH-05</td><td>5G / 4G 网络实测</td></tr>
+        <tr><td class="id">StRS-CYBER-01</td><td>底盘所有对外通信签名校验，禁止接收未签名指令（UN R155）</td><td>SH-07 / 08</td><td>渗透测试 + 型式认证</td></tr>
+        <tr><td class="id">StRS-OTA-01</td><td>支持底盘域控 OTA，升级过程车辆停泊、失败可回滚（UN R156）</td><td>SH-04 / 06</td><td>灰度升级演练</td></tr>
+        <tr><td class="id">StRS-BUS-01</td><td>提供标准 CAN / Ethernet 接口与信号矩阵，不同 AD 公司不改硬件 2 周内完成适配</td><td>SH-01 / 02</td><td>第三方 AD 栈适配演练</td></tr>
+        <tr><td class="id">StRS-ENV-01</td><td>−40℃ ~ +85℃、IP6K9K 防护等级下功能正常</td><td>SH-06</td><td>环境仓 + 淋雨试验</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 19 · 运行模式与系统过程 ============ -->
+<section class="slide" data-part="4">
+  <div class="kicker">Part 4 · 作业 2 StRS / OpsCon</div>
+  <h2>运行模式与系统运行过程</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card">
+      <h3>系统过程（周期 10 ms 闭环）</h3>
+      <p>传感器采样 → 域控融合决策 → 横 / 纵 / 垂向力矩分配 → 执行器动作 → 状态回读闭环；持续进行故障监控，异常时触发冗余切换与最小风险策略。</p>
+    </div>
+    <table>
+      <thead><tr><th style="width:150px">模式</th><th>描述</th><th>退出条件</th></tr></thead>
+      <tbody>
+        <tr><td class="id">M1 全自动驾驶</td><td>完全由自动驾驶栈控制，无人员在环</td><td>ODD 退出 / 系统故障 / 乘客按急停</td></tr>
+        <tr><td class="id">M2 远程接管</td><td>云驾舱下发遥控指令，底盘按比例执行</td><td>远程连接中断 &gt; 3 s</td></tr>
+        <tr><td class="id">M3 最小风险 MRM</td><td>自主减速靠边停车、双闪、上报</td><td>车辆静止且通知完成</td></tr>
+        <tr><td class="id">M4 维保模式</td><td>限速 5 km/h，允许诊断仪接入</td><td>退出维保工位</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g2">
+      <div class="card">
+        <h3>运行策略与规则</h3>
+        <ul class="tight">
+          <li>指令合法性校验：超 ODD / 超物理边界指令必须拒绝并上报</li>
+          <li>失效优先级：执行器失效 &gt; 传感器失效 &gt; 通信失效，按最高等级触发 MRM</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>运行约束（StRS）</h3>
+        <p>横向跟踪误差 ≤ 0.2 m；纵向停车距离误差 ≤ 0.1 m；端到端延迟（指令到轮端）≤ 50 ms；EMB 建压时间 ≤ 150 ms。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 20 · OpsCon 时序 ============ -->
+<section class="slide" data-part="4">
+  <div class="kicker">Part 4 · 作业 2 StRS / OpsCon</div>
+  <h2>OpsCon 运行概念 · 城市 Robotaxi 接驳全过程</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:130px">阶段</th><th>自动驾驶栈指令</th><th>线控底盘动作</th><th>安全机制</th></tr></thead>
+      <tbody>
+        <tr><td class="id">0 预约泊出</td><td>目标车速 5 km/h、目标路径</td><td>SBW 小转角跟踪、EMB 释放、电机蠕行</td><td>低速 VRU 提示音开启</td></tr>
+        <tr><td class="id">1 上车确认</td><td>静止等待</td><td>EPB 夹紧、悬架降至登车高度</td><td>车门联锁校验</td></tr>
+        <tr><td class="id">2 起步巡航</td><td>目标加速度 1.5 m/s²</td><td>驱动电机平滑输出、jerk 限制</td><td>横向偏差闭环监控</td></tr>
+        <tr><td class="id">3 路口跟停</td><td>目标减速度 3 m/s²</td><td>EMB 建压 + 电机回收制动协调</td><td>前后车距雷达交叉校验</td></tr>
+        <tr><td class="id">4 紧急场景</td><td>急减速 + 避让</td><td>EMB 最大建压、SBW 横向避让、CDC 变硬</td><td>双冗余通道实时比对</td></tr>
+        <tr><td class="id">5 接管请求</td><td>远程安全员介入</td><td>按远程指令比例执行，延迟 ≤ 300 ms</td><td>失联 3 s 自动 MRM</td></tr>
+        <tr><td class="id">6 到达下车</td><td>静止</td><td>EPB 夹紧、悬架升 / 降至舒适高度</td><td>P 档确认</td></tr>
+        <tr><td class="id">7 故障 / ODD 退出</td><td>MRM 请求</td><td>自主靠边停车、双闪、上报云控</td><td>故障注入后 200 ms 内触发</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 21 · 分隔 Part 5 ============ -->
+<section class="slide divider" data-part="5">
+  <div class="part-no">PART 05 · 小组作业 3（上）</div>
+  <h2>SyRS 系统需求与初始架构</h2>
+  <div class="desc">在 StRS 基础上由问题域需求向方案域需求转换：按表 5-1 输出系统需求规格书，给出功能 / 逻辑 / 物理 / 接口初始架构与 Driver–System–Vehicle–Environment–Other System 控制结构框图。</div>
+  <div class="chips"><span>SyRS 需求</span><span>四视图架构</span><span>控制框图</span><span>架构权衡</span></div>
+</section>
+
+<!-- ============ 22 · 系统边界与 SyRS 概述 ============ -->
+<section class="slide" data-part="5">
+  <div class="kicker">Part 5 · 作业 3 SyRS / 架构</div>
+  <h2>系统边界与 SyRS 概述</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h3>边界内</h3>
+        <p>线控制动、线控转向、线控驱动 / 扭矩控制、主动悬架与姿态控制、底盘域控制器、功能安全与冗余监控链路。</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--red)">
+        <h3>边界外</h3>
+        <p>自动驾驶感知 / 决策算法、车身内外饰与乘员舱、动力三电与电池能源、车路云协同与交通基础设施；通过标准车载接口交互。</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>SyRS 定位</h3>
+      <p>承接作业 2 的相关方需求，由问题域向方案域转换，形成技术视角的系统需求；需求只描述「系统要做什么」，不暗含具体实现方案。追溯链：<b>BRS → StRS → SyRS → 系统架构与设计 → 子系统 / 模块需求</b>，每条系统需求标注上游 StRS 编号，保证双向可追溯。</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="num">FR</div><div class="lab">功能需求</div></div>
+      <div class="kpi"><div class="num">PR</div><div class="lab">性能需求</div></div>
+      <div class="kpi"><div class="num">IR</div><div class="lab">接口需求</div></div>
+      <div class="kpi"><div class="num">QR / SR</div><div class="lab">质量特性 / 安全安保需求</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 23 · SyRS 需求摘要 ============ -->
+<section class="slide" data-part="5">
+  <div class="kicker">Part 5 · 作业 3 SyRS / 架构</div>
+  <h2>系统需求规格书（SyRS 摘要）</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card">
+        <h3>功能需求</h3>
+        <ul class="tight">
+          <li>指令接收与合法性校验；运动指令到转向 / 制动 / 驱动 / 悬架作动量分配</li>
+          <li>状态采集与闭环反馈；故障 / ODD 退出时自主 MRM</li>
+          <li>横纵向协调控制；状态监控与故障诊断；降级与最小风险控制</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>性能需求（关键指标）</h3>
+        <table>
+          <tbody>
+            <tr><td>端到端延迟（指令到轮端）</td><td class="id">≤ 50 ms</td></tr>
+            <tr><td>横向加速度跟踪误差</td><td class="id">≤ 0.05 g</td></tr>
+            <tr><td>100→0 km/h 制动距离</td><td class="id">≤ 40 m</td></tr>
+            <tr><td>纵向 jerk</td><td class="id">≤ 2.5 m/s³</td></tr>
+            <tr><td>在役可用性</td><td class="id">≥ 99.99%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <h3>接口需求</h3>
+        <p>外部：与智驾域、三电、云控标准化接口；内部：DCU—子系统控制 / 状态 / 故障接口；安全监控具备独立信号通道。</p>
+      </div>
+      <div class="card">
+        <h3>环境与模式</h3>
+        <p>−40℃ ~ +85℃，IP6K9K，满足振动、盐雾与电磁兼容；运行模式 M1 / M2 / M3 / M4。</p>
+      </div>
+      <div class="card">
+        <h3>安保与验证</h3>
+        <p>指令签名校验、拒绝非法指令（R155）；停泊灰度 OTA、失败可回滚（R156）。HIL 台架 + 整车场景试验、故障注入、渗透测试与型式认证。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 24 · 初始架构 ============ -->
+<section class="slide" data-part="5">
+  <div class="kicker">Part 5 · 作业 3 SyRS / 架构</div>
+  <h2>初始系统架构（逻辑视图）</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:110px">编号</th><th>逻辑子系统</th><th>主要功能</th><th>关键接口 / 下属模块</th></tr></thead>
+      <tbody>
+        <tr><td class="id">ARCH-01</td><td>线控转向 SBW</td><td>自动转向执行、转向冗余备份、路感模拟</td><td>齿条助力电机、转角 / 推力传感器、路感电机、备份通道</td></tr>
+        <tr><td class="id">ARCH-02</td><td>线控制动 BBW（EMB + 液压冗余）</td><td>电控制动建压、回收协调、驻车与紧急制动</td><td>EMB 卡钳 / 液压调节器、踏板模拟器、压力传感器、备份制动回路</td></tr>
+        <tr><td class="id">ARCH-03</td><td>线控驱动 / 扭矩矢量</td><td>驱动扭矩分配、牵引力控制、防滑与回收协调</td><td>电机控制器 MCU、减速器、扭矩分配与 TCS 模块</td></tr>
+        <tr><td class="id">ARCH-04</td><td>主动悬架 / 车身姿态</td><td>减振、侧倾 / 俯仰抑制、高度与刚度调节</td><td>空气弹簧 / CDC 阀、作动器、高度与姿态传感器</td></tr>
+        <tr><td class="id">ARCH-05</td><td>底盘域控制器 Chassis DCU</td><td>策略运行、子系统协调、通信网关、诊断与状态管理</td><td>SoC+MCU、CAN / 以太网网关、双源电源、监控诊断单元</td></tr>
+        <tr><td class="id">ARCH-06</td><td>功能安全与冗余监控</td><td>双通道一致性比对、故障检测、降级仲裁、MRM 触发</td><td>独立监控器、冗余电源 / 通信链路、安全状态管理软件</td></tr>
+      </tbody>
+    </table>
+    <div class="card">
+      <h3>架构内三条数据流</h3>
+      <p><span class="tag blue">指令流</span> 智驾域 → DCU 校验仲裁 → 子系统 → 执行机构　　<span class="tag green">状态流</span> 传感器 → 子系统预处理 → DCU 融合监控 → 反馈智驾域 / 云控　　<span class="tag red">安全流</span> 监控器双通道比对 → 异常隔离主链路 → 投入备份 → 降级 / MRM</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 25 · 控制框图 ============ -->
+<section class="slide" data-part="5">
+  <div class="kicker">Part 5 · 作业 3 SyRS / 架构</div>
+  <h2>系统控制结构框图</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="two-col">
+      <div class="svg-box">
+        <svg viewBox="0 0 560 470" role="img" aria-label="控制结构框图">
+          <defs>
+            <marker id="cr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#c0392b"/></marker>
+            <marker id="cb" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1f6feb"/></marker>
+            <marker id="cg" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#64748b"/></marker>
+          </defs>
+          <!-- Driver -->
+          <rect x="170" y="20" width="220" height="64" rx="8" fill="#3b3b98"/>
+          <text x="280" y="46" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">Driver 控制方</text>
+          <text x="280" y="68" text-anchor="middle" fill="#fff" font-size="11">智驾域控 AD-ECU · 远程安全员</text>
+          <!-- System -->
+          <rect x="120" y="170" width="320" height="110" rx="10" fill="#f3f0d8" stroke="#b8a86a" stroke-width="1.5"/>
+          <text x="280" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#7a6520">System 线控底盘平台（SOI）</text>
+          <rect x="140" y="210" width="135" height="52" rx="6" fill="#fff" stroke="#b8a86a"/>
+          <text x="207" y="231" text-anchor="middle" font-size="11.5" fill="#334155">Control Algorithm</text>
+          <text x="207" y="249" text-anchor="middle" font-size="10.5" fill="#64748b">协调仲裁 · 校验 · MRM</text>
+          <rect x="285" y="210" width="135" height="52" rx="6" fill="#fff" stroke="#b8a86a"/>
+          <text x="352" y="231" text-anchor="middle" font-size="11.5" fill="#334155">Process Model</text>
+          <text x="352" y="249" text-anchor="middle" font-size="10.5" fill="#64748b">执行链路 · 动力学模型</text>
+          <!-- Vehicle -->
+          <rect x="170" y="356" width="220" height="64" rx="8" fill="#d3d3d3"/>
+          <text x="280" y="382" text-anchor="middle" fill="#1f2937" font-size="15" font-weight="700">Vehicle 整车</text>
+          <text x="280" y="404" text-anchor="middle" fill="#334155" font-size="11">执行器 + 车轮 + 乘员承载</text>
+          <!-- Environment -->
+          <rect x="430" y="180" width="120" height="90" rx="8" fill="#eef9e0" stroke="#8ee000" stroke-dasharray="5 3"/>
+          <text x="490" y="215" text-anchor="middle" font-size="12" font-weight="700" fill="#4a7a10">Environment</text>
+          <text x="490" y="235" text-anchor="middle" font-size="10" fill="#4a7a10">路面 / 交通 / 天气</text>
+          <text x="490" y="251" text-anchor="middle" font-size="10" fill="#4a7a10">ODD 边界</text>
+          <!-- Other System -->
+          <rect x="10" y="180" width="120" height="90" rx="8" fill="#fff" stroke="#333" stroke-dasharray="5 3"/>
+          <text x="70" y="210" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">Other System</text>
+          <text x="70" y="230" text-anchor="middle" font-size="10" fill="#64748b">三电 / 车身座舱</text>
+          <text x="70" y="246" text-anchor="middle" font-size="10" fill="#64748b">地图定位 / 云控 V2X</text>
+          <!-- 箭头 -->
+          <line x1="255" y1="84" x2="255" y2="168" stroke="#c0392b" stroke-width="2" marker-end="url(#cr)"/>
+          <text x="150" y="130" font-size="10.5" fill="#c0392b">Control Action</text>
+          <line x1="305" y1="168" x2="305" y2="86" stroke="#1f6feb" stroke-width="2" marker-end="url(#cb)"/>
+          <text x="318" y="130" font-size="10.5" fill="#1f6feb">Feedback</text>
+          <line x1="255" y1="280" x2="255" y2="354" stroke="#c0392b" stroke-width="2" marker-end="url(#cr)"/>
+          <text x="150" y="322" font-size="10.5" fill="#c0392b">Control Action</text>
+          <line x1="305" y1="354" x2="305" y2="282" stroke="#1f6feb" stroke-width="2" marker-end="url(#cb)"/>
+          <text x="318" y="322" font-size="10.5" fill="#1f6feb">Feedback</text>
+          <line x1="130" y1="225" x2="122" y2="225" stroke="#64748b" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#cg)"/>
+          <line x1="430" y1="225" x2="438" y2="225" stroke="#64748b" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#cg)"/>
+        </svg>
+      </div>
+      <div class="card">
+        <h3>链路信号说明</h3>
+        <table>
+          <tbody>
+            <tr><td class="id">Driver → System</td><td>目标车速 / 横摆 / 加速度、远程遥控指令</td></tr>
+            <tr><td class="id">System → Driver</td><td>执行状态、故障、降级与 MRM 状态、可执行性反馈</td></tr>
+            <tr><td class="id">System → Vehicle</td><td>转向角、制动压力 / 夹紧力、驱动 / 回收扭矩、悬架作动量</td></tr>
+            <tr><td class="id">Vehicle → System</td><td>轮速、转角、压力、车身高度与姿态、轴荷状态</td></tr>
+            <tr><td class="id">System ↔ Other</td><td>扭矩 / 能量、车身乘员状态、定位导航、诊断健康度</td></tr>
+            <tr><td class="id">Environment ↔ 车 / 系统</td><td>附着 / 坡度 / 横风扰动；车辆行为输出；V2X / 云控数据经相关系统接入</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:10px">红色 = Control Action 控制作用；蓝色 = Feedback 反馈；灰色虚线 = Interaction 交互。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 26 · 架构权衡 ============ -->
+<section class="slide" data-part="5">
+  <div class="kicker">Part 5 · 作业 3 SyRS / 架构</div>
+  <h2>架构权衡与备选方案</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:200px">方案</th><th>描述</th><th>优点</th><th>局限</th><th style="width:110px">结论</th></tr></thead>
+      <tbody>
+        <tr><td><b>A 分布式 ECU</b> 各自独立控制</td><td>转向 / 制动 / 驱动 / 悬架由独立 ECU 分散控制</td><td>技术成熟、单点改动影响小</td><td>横纵协同弱、冗余与仲裁分散、线束复杂</td><td><span class="tag amber">不满足高阶智驾协同要求</span></td></tr>
+        <tr><td><b>B 底盘域控集中协调</b>（本方案）</td><td>底盘 DCU 统一仲裁与协调，冗余集中设计，软件可迭代</td><td>统一协调、冗余集中、可软件演进</td><td>域控本身需高可靠与独立安全监控</td><td><span class="tag green">选用</span></td></tr>
+        <tr><td><b>C 区域控制器直接执行</b></td><td>中央计算 + 区域控制，执行器就近接入区域控制器</td><td>线束最精简，面向远期 E/E 架构</td><td>当前供应链与成熟度不足</td><td><span class="tag blue">预留接口 · 演进方向</span></td></tr>
+      </tbody>
+    </table>
+    <div class="card">
+      <h3>权衡准则与设计原则</h3>
+      <p><b>权衡依据：</b>安全（冗余独立性）· 协同（横纵垂统一分配）· 成本（平台复用）· 可演进（接口预留）四项准则综合评分。<br>
+      <b>设计原则：</b>安全优先（安全功能独立设计、独立监控，先校验后执行）；冗余独立（电源 / 通信 / 控制器互不共因）；解耦协同（纵 / 横 / 垂向解耦、域控统一协调）；可观测可编程（全链路可测可诊断、特性软件定义）；平台可演进（预留域集中 / 中央计算 + 区域控制接口）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 27 · 分隔 Part 6 ============ -->
+<section class="slide divider" data-part="6">
+  <div class="part-no">PART 06 · 作业 3（下）+ 作业 4</div>
+  <h2>安全分析 · 场景与风险 · 总结追溯</h2>
+  <div class="desc">基于初始架构开展 STPA 分析，导出安全需求与双通道冗余安全架构；进而完成场景分层、运行设计条件设定、典型场景论述与风险场景列表，反向追溯到架构与安全需求。</div>
+  <div class="chips"><span>STPA</span><span>安全架构</span><span>ODD / ODC</span><span>典型场景</span><span>风险列表</span></div>
+</section>
+
+<!-- ============ 28 · STPA 危险与 UCA ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 安全分析（作业 3 下）</div>
+  <h2>STPA 系统理论过程分析</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card" style="background:#f7fafc">
+      <p><b>分析思路：</b>STPA 把安全视为控制问题——危险来自「不恰当的控制动作」，而非单一零部件失效。先建立控制结构，再识别不安全控制动作（UCA），由 UCA 导出安全需求，最后落实为安全架构机制。</p>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>系统级危险（Hazard）</h3>
+        <table>
+          <tbody>
+            <tr><td class="id">H-1</td><td>转向失控 / 转向失效：偏离车道、冲出道路</td></tr>
+            <tr><td class="id">H-2</td><td>制动失效或误制动：无法减速碰撞 / 非预期制动被追尾</td></tr>
+            <tr><td class="id">H-3</td><td>驱动扭矩失控：非预期加速、碰撞或甩尾</td></tr>
+            <tr><td class="id">H-4</td><td>人机 / 多域指令冲突：控制混乱、交接阶跃扰动</td></tr>
+            <tr><td class="id">H-5</td><td>通信丢失 / 超时：依据过期指令执行</td></tr>
+            <tr><td class="id">H-6</td><td>电源失效：执行丧失、车辆失控</td></tr>
+            <tr><td class="id">H-7</td><td>车辆失稳：侧滑 / 甩尾 / 侧翻</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>不安全控制动作（UCA）四类情形</h3>
+        <ul class="tight">
+          <li><b>未提供必要动作：</b>避障 / 碰撞风险下未提供制动控制动作</li>
+          <li><b>提供不安全动作：</b>过大 / 错误方向转角；非预期制动；非预期或超限驱动扭矩</li>
+          <li><b>时机不当：</b>自动 / 手动切换时机或融合不当，产生指令冲突阶跃；通信超时后仍按旧指令输出</li>
+          <li><b>持续 / 停止不当：</b>降级后误提前恢复全功能；制动 / 转向动作卡滞不解除</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 29 · 安全需求与安全架构 ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 安全分析（作业 3 下）</div>
+  <h2>安全需求与安全架构</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card">
+      <h3>导出安全需求</h3>
+      <table>
+        <thead><tr><th style="width:110px">编号</th><th>安全需求</th><th style="width:150px">等级 / 依据</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SRF-01</td><td>转向 / 制动关键通路冗余备份，主通路失效后备份在规定时间内接管，保持方向可控与减速能力</td><td>ASIL-D · ISO 26262</td></tr>
+          <tr><td class="id">SRF-02</td><td>所有下行控制输出经合理性校验：转角 / 压力 / 扭矩限幅并与状态、附着一致性核对，越限矛盾输出拒绝执行</td><td>功能安全架构</td></tr>
+          <tr><td class="id">SRF-03</td><td>建立人机 / 多域指令仲裁规则，安全操作优先，切换平滑融合、禁止控制阶跃</td><td>功能安全架构</td></tr>
+          <tr><td class="id">SRF-04</td><td>监控通信链路，报文超时 / 丢失时停止依据旧指令输出，转入安全状态并告警</td><td>ISO 26262</td></tr>
+          <tr><td class="id">SRF-05</td><td>独立于主控的安全监控（Safety MCU）旁路校核主控输出与通路健康，异常独立触发保护</td><td>ASIL 分解 · 防共因</td></tr>
+          <tr><td class="id">SRF-06</td><td>分级降级与最小风险状态（MRC）：提示 → 功能降级限幅 → 安全靠边 / 停车；故障消除前不得误恢复全功能</td><td>ISO 26262</td></tr>
+          <tr><td class="id">SRF-07</td><td>关键安全件双电源供电并监控电压跌落，单路失效由备份电源维持安全相关执行</td><td>ISO 26262</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid g3">
+      <div class="card"><h3>双通道冗余</h3><p>供电、通信、计算、执行层主备并行，关键信号双源采集。</p></div>
+      <div class="card"><h3>独立监控</h3><p>安全监控器独立于主控运行，完成校验、诊断与安全状态仲裁。</p></div>
+      <div class="card"><h3>分级降级</h3><p>限制功能 → 限速蠕行 → MRM 靠边停车；备份链路保证最低运动能力。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 30 · 场景分层 ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 作业 4 场景与风险</div>
+  <h2>场景分层 <span class="sub">从宏观任务到系统状态，另设风险层</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:90px">层级</th><th>名称</th><th>回答的问题</th><th>本系统场景示例</th></tr></thead>
+      <tbody>
+        <tr><td class="id">L1</td><td>任务场景层</td><td>为什么出行、达成什么任务</td><td>城区 Robotaxi 载客接驳、点对点通勤、园区 / 物流配送、失效兜底停车</td></tr>
+        <tr><td class="id">L2</td><td>环境场景层</td><td>在什么外部环境运行</td><td>道路拓扑与等级、路面条件、气象光照、地理与法规区域</td></tr>
+        <tr><td class="id">L3</td><td>交通交互层</td><td>与谁交互、关系如何</td><td>跟车、切入切出、路口交会、行人 / 非机动车横穿、静态障碍避让</td></tr>
+        <tr><td class="id">L4</td><td>运动操控层</td><td>底盘如何执行车辆运动</td><td>定速巡航、纵向加减速、转向 / 变道、紧急制动、避障跟踪、低附着操控、驻车</td></tr>
+        <tr><td class="id">L5</td><td>系统状态层</td><td>系统处于什么运行 / 健康状态</td><td>M1 全自动、降级限速、M2 远程接管、M3 MRM、M4 维保</td></tr>
+        <tr><td class="id">L6</td><td>风险场景层</td><td>哪些偏离正常的工况构成风险</td><td>硬件 / 软件失效、指令超限、极限工况、预期功能局限、网络攻击</td></tr>
+      </tbody>
+    </table>
+    <div class="card">
+      <p><b>层间关系：</b>自上而下约束——任务层决定环境与交互选择范围，环境与交互决定操控动作，操控在特定系统状态下执行；自下而上支撑——系统状态保证操控可执行，操控响应交互，交互适配环境，最终支撑任务完成。<b>风险层贯穿各层</b>：任一层要素偏离正常取值即进入风险场景，由安全架构（ARCH-06）识别、降级或兜底。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 31 · 运行设计条件 ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 作业 4 场景与风险</div>
+  <h2>运行设计条件（ODC / ODD）</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card">
+      <h3>4.1 运行设计范围（ODD）</h3>
+      <table>
+        <thead><tr><th>条件项</th><th>设计范围</th><th>超出范围策略</th></tr></thead>
+        <tbody>
+          <tr><td>道路类型</td><td>结构化城市道路、快速路、高速、封闭园区、泊车区；不含非铺装越野路</td><td>退出 ODD，请求接管或 MRM</td></tr>
+          <tr><td>车速区间</td><td>城区 0–60 km/h；快速 / 高速 60–120 km/h</td><td>按道路类型限速</td></tr>
+          <tr><td>路面附着</td><td>μ ≥ 0.3；μ 0.1–0.3 仅允许蠕行限速</td><td>低附着降低减速度 / 转角，TCS / ABS 介入</td></tr>
+          <tr><td>坡度 / 气象</td><td>坡度 ±12% 内；能见度 ≥ 100 m；器件耐温 −40℃ ~ +85℃</td><td>越界退出 ODD</td></tr>
+          <tr><td>定位通信 / 法规</td><td>高精定位有效；云控 / V2X 可容忍短时中断；授权地理围栏内</td><td>定位丢失或长时中断 → MRM；越界即退出</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>4.2 系统状态条件</h3>
+        <ul class="tight">
+          <li>上电自检通过；无未清除 ASIL 故障码；故障已隔离且不影响基本运动能力</li>
+          <li>主备控制 / 通信 / 电源 / 执行通道状态明确，关键信号双源一致</li>
+          <li>模式合法切换，禁止 M4 直接进入 M1；指令在物理边界与附着能力之内</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>4.3 人员状态条件</h3>
+        <ul class="tight">
+          <li><b>M1：</b>无在环驾驶员；远程安全员在岗可按时限接管；乘员就位、被动安全可用</li>
+          <li><b>M2：</b>安全员在线，链路时延与可靠性满足要求，指令按比例映射</li>
+          <li><b>M3：</b>无可介入人员，自主完成减速、靠边、双闪与上报</li>
+          <li><b>M4：</b>维保人员处于安全工位、诊断仪接入，限速 5 km/h</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 32 · 典型场景 ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 作业 4 场景与风险</div>
+  <h2>典型场景：城市主干道跟车 · 前车紧急制动</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="card">
+      <p><b>背景：</b>城市主干道单向两车道，干燥沥青、白天能见度良好、限速 50 km/h；本车 L4 Robotaxi 以 40 km/h 跟车，邻车道有社会车辆；前车遇红灯 / 障碍紧急减速，本车无在环驾驶员，由智驾域决策、线控底盘执行。场景同时覆盖 L1 载客任务、L2 城市道路、L3 跟车交互、L4 纵横向操控、L5 正常—降级—MRM 状态衔接。</p>
+    </div>
+    <table>
+      <thead><tr><th style="width:110px">时刻</th><th>事件</th><th>底盘平台响应</th></tr></thead>
+      <tbody>
+        <tr><td class="id">T0 巡航</td><td>匀速跟车</td><td>M1 状态；驱动扭矩随速调节；悬架抑制俯仰；状态周期上报智驾域与云控</td></tr>
+        <tr><td class="id">T1 触发</td><td>前车减速、间距缩短；智驾域下发增大目标减速度与车道保持指令</td><td>DCU 接收指令，启动合法性与边界校验</td></tr>
+        <tr><td class="id">T2 校验</td><td>减速度、转角在附着与物理边界内；双源数据一致</td><td>校验通过进入控制分配；不一致则隔离主通道并仲裁降级（SAFE-03）</td></tr>
+        <tr><td class="id">T3 纵向</td><td>需要快速减速</td><td>切断 / 回收驱动扭矩 → 回收与摩擦制动（EMB / 液压备份）逐级建压；悬架抑制点头；ABS / TCS 防抱死</td></tr>
+        <tr><td class="id">T4 横向</td><td>邻车道有社会车辆，不具备安全变道条件</td><td>转向保持本车道，禁止侵入邻车道；确认可控避让空间时按避让轨迹跟踪</td></tr>
+        <tr><td class="id">T5 停车 / MRM</td><td>前车静止停稳；或制动能力不足、风险未解除</td><td>EPB 夹紧；主通道异常则备份投入；风险无法消除触发 MRM：双闪、靠边、上报云控</td></tr>
+      </tbody>
+    </table>
+    <div class="card">
+      <p><b>成功判据：</b>无追尾 / 刮蹭；减速度跟踪误差 ≤ 0.05 g，jerk ≤ 2.5 m/s³；横向车道偏离 ≤ 0.2 m；任一链路异常 200 ms 内进入降级并可安全停车；全过程状态、故障与动作记录可追溯。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 33 · 风险列表（上） ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 作业 4 场景与风险</div>
+  <h2>风险场景列表（1 / 2）</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:70px">编号</th><th>风险场景 / 诱因</th><th>可能后果</th><th style="width:64px">等级</th><th>缓解措施 · 追溯</th></tr></thead>
+      <tbody>
+        <tr><td class="id">RS-01</td><td>制动主通道建压失效或迟滞：EMB 卡钳故障、液压阀卡滞、压力传感器漂移</td><td>制动距离延长，追尾前车</td><td><span class="tag red">高</span></td><td>备份制动通道；双源压力监测；200 ms 内降级；冗余建压与 AEB 兜底（ARCH-02/06，SRF-01/02）</td></tr>
+        <tr><td class="id">RS-02</td><td>转向执行失效或卡滞：转向电机故障、齿条卡滞、转角信号丢失</td><td>偏离车道、冲出道路</td><td><span class="tag red">高</span></td><td>备份转向通道；转角双源监控；限速并触发 MRM（ARCH-01，SRF-01）</td></tr>
+        <tr><td class="id">RS-03</td><td>双通道信号不一致：传感器漂移、通信错位导致主备数据偏差</td><td>误判车辆状态、产生非预期动作</td><td><span class="tag amber">中</span></td><td>独立监控器实时比对；不一致隔离主通道并仲裁降级（ARCH-06，SRF-05）</td></tr>
+        <tr><td class="id">RS-04</td><td>总线通信中断或丢包：网关故障、线束干扰、总线拥塞</td><td>指令丢失或底盘状态无法上报</td><td><span class="tag red">高</span></td><td>冗余总线；指令超时进入安全态；最后有效指令保持策略（ARCH-05，SRF-04）</td></tr>
+        <tr><td class="id">RS-05</td><td>单路电源失效：一路电源或熔断器故障</td><td>执行能力下降、部分链路失效</td><td><span class="tag amber">中</span></td><td>双源供电与故障切换；备份回路保证最小运动能力（ARCH-05/06，SRF-07）</td></tr>
+        <tr><td class="id">RS-06</td><td>上层指令超限：智驾域下发超速、过大转角或过大减速度</td><td>失控、甩尾、乘坐冲击过大</td><td><span class="tag amber">中</span></td><td>指令合法性与物理边界校验；超限限幅并反馈可执行性（ARCH-05，SRF-02）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 34 · 风险列表（下） ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 作业 4 场景与风险</div>
+  <h2>风险场景列表（2 / 2）与处置原则</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:70px">编号</th><th>风险场景 / 诱因</th><th>可能后果</th><th style="width:64px">等级</th><th>缓解措施 · 追溯</th></tr></thead>
+      <tbody>
+        <tr><td class="id">RS-07</td><td>低附着路面紧急制动：雨雪冰面附着低，紧急制动或猛打方向</td><td>车轮抱死、打滑、甩尾</td><td><span class="tag red">高</span></td><td>附着估计；ABS / TCS 调节；提前减速与限速策略（ARCH-02/03）</td></tr>
+        <tr><td class="id">RS-08</td><td>横风 / 坡道 / 偏载导致姿态失稳</td><td>侧倾 / 俯仰过大、轨迹偏移</td><td><span class="tag amber">中</span></td><td>姿态与轴荷监测；悬架作动补偿；超限限速降级（ARCH-04，SAFE-04）</td></tr>
+        <tr><td class="id">RS-09</td><td>预期功能局限（SOTIF）：异形障碍、VRU 识别不足</td><td>底盘收到迟滞或不可执行指令</td><td><span class="tag red">高</span></td><td>ODD 边界约束；场景库与边界场景验证；必要时降级避让（ISO 21448）</td></tr>
+        <tr><td class="id">RS-10</td><td>网络攻击或伪造指令：总线被入侵、指令被伪造篡改</td><td>非预期加减速或转向</td><td><span class="tag red">高</span></td><td>指令签名校验；内外分区隔离；入侵检测；日志防篡改（SRF-04，R155）</td></tr>
+        <tr><td class="id">RS-11</td><td>远程接管链路中断：云驾舱通信中断超约定时长</td><td>遥控指令丢失，接管失效</td><td><span class="tag amber">中</span></td><td>超时自动退出 M2，转入 M3 最小风险 MRM（ARCH-06）</td></tr>
+        <tr><td class="id">RS-12</td><td>悬架 / 载荷异常：弹簧或作动器故障、轴荷超限</td><td>车身姿态异常、轮胎抓地恶化</td><td><span class="tag amber">中</span></td><td>高度 / 姿态监测；限速告警；触发维保诊断流程（ARCH-04）</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3">
+      <div class="card"><h3>预防</h3><p>冗余设计、边界校验、ODD 约束与场景库验证，使风险场景尽量不进入执行环节。</p></div>
+      <div class="card"><h3>检测与降级</h3><p>独立监控器发现异常后隔离故障通道，按「限制功能 → 限速蠕行 → MRM 靠边停车」分级处置。</p></div>
+      <div class="card"><h3>兜底</h3><p>备份链路保证最小转向与制动；MRM 停车、双闪、上报；全过程数据可追溯，支撑 FMEA / FTA 与场景补充。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 35 · 总结追溯 ============ -->
+<section class="slide" data-part="6">
+  <div class="kicker">Part 6 · 总结</div>
+  <h2>总结与追溯 <span class="sub">四份作业形成闭环</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="chain">
+      <div class="step"><div class="t">作业 1</div><div class="d">六层分解<br>定位系统层、要素清单</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="t">作业 2</div><div class="d">BRS / StRS<br>业务与相关方需求、ConOps / OpsCon</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="t">作业 3</div><div class="d">SyRS / 架构 / 框图<br>STPA 安全需求与安全架构</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="t">作业 4</div><div class="d">场景 / ODC / 风险<br>反向追溯架构与需求</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>结论</h3>
+        <ul class="tight">
+          <li>线控底盘平台定位系统层，是高阶智驾「意图 → 车轮」之间的最后执行环节</li>
+          <li>需求自业务层逐级转化到系统与架构层，每条需求可双向追溯</li>
+          <li>双通道冗余 + 独立监控 + 分级降级构成安全基座；风险场景列表是安全需求的来源与验证载体</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>参考标准与资料</h3>
+        <p>ISO/IEC/IEEE 15288 · 29148:2018；ISO 26262 功能安全；ISO 21448 SOTIF；ISO/SAE 21434；UN R155/R156；GB/T 40429；ISO 34503 ODD；郭宝柱《系统工程——基于国际标准过程的研究与实践》。</p>
+      </div>
+    </div>
+    <div class="card" style="text-align:center;background:#1f4e79;color:#fff">
+      <p style="font-size:22px;font-weight:800;color:#fff">谢谢聆听 · 欢迎提问与打分互评</p>
+      <p class="note" style="color:#c9dcea;margin-top:6px">Complex Systems Engineering · 2026 · 面向高级别自动驾驶的线控底盘平台小组汇报</p>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <button class="nav-btn" id="prev">← 上一页</button>
+  <div id="counter">1 / 35</div>
+  <button class="nav-btn" id="next">下一页 →</button>
+</div>
+
+<!-- 目录菜单 -->
+<div id="overlay">
+  <div id="menu-panel">
+    <h3>汇报目录 · 点击跳转</h3>
+    <div id="menu-list"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const stage = document.getElementById('stage');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const overlay = document.getElementById('overlay');
+  const menuList = document.getElementById('menu-list');
+  let cur = 0;
+
+  // 章节名
+  const partNames = {1:'讲者1 · 开场总览',2:'讲者2 · 层级分解',3:'讲者3 · BRS / ConOps',4:'讲者4 · StRS / OpsCon',5:'讲者5 · SyRS / 架构',6:'讲者6 · 安全 · 场景 · 总结'};
+
+  function scaleStage(){
+    const s = Math.min(window.innerWidth/1280, window.innerHeight/720);
+    stage.style.transform = 'scale('+s+')';
+  }
+  scaleStage();
+  window.addEventListener('resize', scaleStage);
+
+  function titleOf(slide){
+    const h = slide.querySelector('h2');
+    return h ? h.textContent.trim().replace(/\s+/g,' ') : '（分隔页）';
+  }
+
+  function renderMenu(){
+    menuList.innerHTML = '';
+    slides.forEach((s,i)=>{
+      const part = s.dataset.part;
+      const div = document.createElement('div');
+      div.className = 'menu-item' + (i===cur?' cur':'');
+      div.innerHTML = '<span class="mi-no">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<span class="mi-part">'+(partNames[part]||'')+'</span>'+
+        '<span class="mi-title">'+titleOf(s)+'</span>';
+      div.onclick = ()=>{show(i); overlay.classList.remove('open');};
+      menuList.appendChild(div);
+    });
+  }
+
+  function show(i){
+    cur = Math.max(0, Math.min(total-1, i));
+    slides.forEach((s,k)=>s.classList.toggle('active', k===cur));
+    counter.textContent = (cur+1)+' / '+total;
+    progress.style.width = ((cur+1)/total*100)+'%';
+    renderMenu();
+    try{ history.replaceState(null,'','#'+(cur+1)); }catch(e){}
+  }
+
+  document.getElementById('prev').onclick = ()=>show(cur-1);
+  document.getElementById('next').onclick = ()=>show(cur+1);
+  document.getElementById('menu-btn').onclick = ()=>overlay.classList.add('open');
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.remove('open'); };
+
+  document.addEventListener('keydown', (e)=>{
+    if(overlay.classList.contains('open')){
+      if(e.key==='Escape') overlay.classList.remove('open');
+      return;
+    }
+    if(['ArrowRight','PageDown',' ','ArrowDown'].includes(e.key)){ e.preventDefault(); show(cur+1); }
+    else if(['ArrowLeft','PageUp','ArrowUp'].includes(e.key)){ e.preventDefault(); show(cur-1); }
+    else if(e.key==='Home'){ show(0); }
+    else if(e.key==='End'){ show(total-1); }
+  });
+
+  // 触屏滑动
+  let sx=null;
+  document.addEventListener('touchstart', e=>{sx=e.touches[0].clientX;},{passive:true});
+  document.addEventListener('touchend', e=>{
+    if(sx===null) return;
+    const dx=e.changedTouches[0].clientX-sx;
+    if(dx<-50) show(cur+1); else if(dx>50) show(cur-1);
+    sx=null;
+  },{passive:true});
+
+  // hash 定位
+  const hash = parseInt(location.hash.replace('#',''),10);
+  show(isNaN(hash)?0:hash-1);
+})();
+</script>
+</body>
+</html>
