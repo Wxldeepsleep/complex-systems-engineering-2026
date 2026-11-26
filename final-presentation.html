@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面向高级别自动驾驶的线控底盘平台 · 复杂系统工程小组汇报</title>
+<style>
+:root{
+  --primary:#1f4e79; --primary2:#2b6cb0; --accent:#e8833a; --accent2:#f4a261;
+  --bg:#eef3f8; --card:#ffffff; --ink:#1f2937; --muted:#64748b; --line:#dbe5ee;
+  --red:#c0392b; --blue:#1f6feb; --green:#3f9d54; --amber:#b7791f;
+  --shadow:0 6px 24px rgba(31,78,121,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#dce6ef;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink)}
+/* ---------- 舞台与缩放 ---------- */
+#stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{width:1280px;height:720px;position:relative;transform-origin:center center}
+/* ---------- 幻灯片 ---------- */
+.slide{position:absolute;inset:0;background:var(--bg);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;
+  padding:42px 56px 56px;display:none;flex-direction:column}
+.slide.active{display:flex;animation:fade .28s ease}
+@keyframes fade{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+/* 顶部标题 */
+.kicker{font-size:14px;letter-spacing:.18em;color:var(--primary2);font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.slide h2{font-size:30px;color:var(--primary);font-weight:800;letter-spacing:.01em}
+.slide h2 .sub{font-size:16px;color:var(--muted);font-weight:500;margin-left:12px}
+.title-rule{width:64px;height:4px;background:var(--accent);border-radius:2px;margin:10px 0 22px}
+.body{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0}
+/* ---------- 通用组件 ---------- */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g6{grid-template-columns:repeat(6,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:0 2px 8px rgba(31,78,121,.06)}
+.card h3{font-size:17px;color:var(--primary);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h3 .no{background:var(--primary);color:#fff;border-radius:8px;font-size:13px;padding:2px 9px}
+.card p,.card li{font-size:14px;line-height:1.65;color:var(--ink)}
+ul.tight{padding-left:18px}ul.tight li{margin:5px 0}
+.muted{color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 10px;background:#e6f0f8;color:var(--primary)}
+.tag.red{background:#fbeae8;color:var(--red)}
+.tag.blue{background:#e8f1fe;color:var(--blue)}
+.tag.green{background:#e8f5ec;color:var(--green)}
+.tag.amber{background:#fdf3e3;color:var(--amber)}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--primary2);border-radius:12px;padding:16px;text-align:center}
+.kpi .num{font-size:24px;font-weight:800;color:var(--primary)}
+.kpi .lab{font-size:13px;color:var(--muted);margin-top:4px}
+/* 表格 */
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border-radius:10px;overflow:hidden}
+thead th{background:var(--primary);color:#fff;font-weight:600;padding:9px 10px;text-align:left;font-size:13px}
+tbody td{padding:8px 10px;border-top:1px solid var(--line);line-height:1.5;vertical-align:top}
+tbody tr:nth-child(even){background:#f7fafc}
+td .id{font-weight:700;color:var(--primary2);white-space:nowrap}
+/* 流程链 */
+.chain{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+.chain .step{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 12px;text-align:center;position:relative}
+.chain .step .t{font-weight:700;color:var(--primary);font-size:15px;margin-bottom:4px}
+.chain .step .d{font-size:12.5px;color:var(--muted);line-height:1.5}
+.chain .arrow{display:flex;align-items:center;justify-content:center;width:34px;color:var(--primary2);font-size:22px;font-weight:700}
+/* 分隔页 */
+.divider{background:linear-gradient(135deg,#163a5c 0%,#1f4e79 55%,#2b6cb0 100%);color:#fff;justify-content:center;padding:0 90px}
+.divider .part-no{font-size:18px;letter-spacing:.3em;color:#9fc6e8;font-weight:700;margin-bottom:18px}
+.divider h2{color:#fff;font-size:44px;line-height:1.3}
+.divider .desc{margin-top:18px;font-size:17px;color:#d6e6f3;max-width:720px;line-height:1.7}
+.divider .speaker{margin-top:34px;display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 18px;font-size:15px}
+.divider .speaker b{color:var(--accent2)}
+.divider .chips{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+.divider .chips span{font-size:13px;background:rgba(255,255,255,.1);border-radius:8px;padding:6px 12px}
+/* 封面 */
+.cover{background:linear-gradient(135deg,#102c46 0%,#1f4e79 60%,#2f7fb8 100%);color:#fff;justify-content:center}
+.cover .course{font-size:16px;letter-spacing:.28em;color:#9fc6e8;font-weight:700;margin-bottom:26px}
+.cover h1{font-size:46px;line-height:1.28;font-weight:900;max-width:1000px}
+.cover h1 em{font-style:normal;color:var(--accent2)}
+.cover .sub{margin-top:22px;font-size:19px;color:#d6e6f3;max-width:820px;line-height:1.7}
+.cover .meta{margin-top:44px;display:flex;gap:34px;font-size:15px;color:#c9dcea}
+.cover .meta b{display:block;font-size:13px;color:#8fb8d8;margin-bottom:3px;font-weight:600}
+.cover .rule{width:90px;height:5px;background:var(--accent);border-radius:3px;margin:28px 0}
+/* 底部导航 */
+#hud{position:fixed;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:13px;color:var(--muted);z-index:30}
+#hud .nav-btn{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;color:var(--primary);font-weight:600;font-size:13px}
+#hud .nav-btn:hover{background:var(--primary);color:#fff}
+#counter{font-variant-numeric:tabular-nums}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:31;transition:width .25s ease}
+/* 菜单 */
+#menu-btn{position:fixed;top:12px;right:18px;z-index:32;cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:13px;color:var(--primary);font-weight:600}
+#overlay{position:fixed;inset:0;background:rgba(16,44,70,.55);z-index:40;display:none;align-items:center;justify-content:center}
+#overlay.open{display:flex}
+#menu-panel{background:#fff;border-radius:16px;width:760px;max-height:80vh;overflow:auto;padding:26px 30px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+#menu-panel h3{color:var(--primary);margin-bottom:16px;font-size:18px}
+.menu-item{display:flex;gap:12px;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:14px}
+.menu-item:hover{background:#eef3f8}
+.menu-item .mi-no{font-weight:800;color:var(--primary2);width:34px}
+.menu-item .mi-part{font-size:12px;color:var(--muted);width:120px;flex:none}
+.menu-item .mi-title{flex:1}
+.menu-item.cur{background:#e6f0f8}
+/* SVG 框 */
+.svg-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.svg-box svg{width:100%;height:auto;display:block}
+.note{font-size:12.5px;color:var(--muted);line-height:1.6}
+.two-col{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;flex:1;min-height:0}
+.legend{display:flex;gap:18px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:22px;height:0;border-top:2.5px solid;margin-right:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<button id="menu-btn">目录 ☰</button>
+
+<div id="stage-wrap">
+<div id="stage">
+
+<!-- ============ 1 · 封面（讲者1） ============ -->
+<section class="slide cover" data-part="1">
+  <div class="course">COMPLEX SYSTEMS ENGINEERING · 复杂系统工程 · 2026 小组汇报</div>
+  <h1>面向高级别自动驾驶的<br><em>线控底盘平台</em> · 复杂系统工程课程作业汇报</h1>
+  <div class="rule"></div>
+  <div class="sub">整合小组作业 1–4：六层层级分解 → BRS / StRS 概念定义 → SyRS 与初始架构 / 安全分析 → 场景分层 / 运行设计条件 / 风险分析，形成完整汇报材料。</div>
+  <div class="meta">
+    <div><b>分析对象（SoI）</b>线控底盘平台 · 系统（Systems）层</div>
+    <div><b>汇报分工</b>6 位讲者 · 六部分</div>
+    <div><b>日期</b>2026-11-26</div>
+  </div>
+</section>
+
+<!-- ============ 2 · 选题与系统定义 ============ -->
+<section class="slide" data-part="1">
+  <div class="kicker">Part 1 · 开场与项目总览</div>
+  <h2>选题与系统定义 <span class="sub">为什么是线控底盘</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="two-col">
+      <div class="card">
+        <h3><span class="no">定义</span>System of Interest</h3>
+        <p>面向 L4 级高级别自动驾驶的<b>线控底盘平台</b>，以电信号为指令载体，通过冗余架构实现制动、转向、驱动、悬架等运动控制，向上承接智驾域规划决策指令，向下驱动各执行部件，是连接「大脑决策」与「车轮执行」的关键环节。</p>
+        <p style="margin-top:10px">其本质是高阶智驾的<b>「最后一公里执行机构」</b>：上层给出纵向加减速、横向转角与姿态目标，底盘实时、精确、安全地转化为车轮与路面的力与运动。</p>
+      </div>
+      <div class="grid" style="grid-template-rows:1fr 1fr;gap:14px">
+        <div class="card" style="border-left:4px solid var(--green)">
+          <h3>边界内</h3>
+          <p>线控制动、线控转向、线控驱动 / 扭矩控制、主动悬架与姿态、底盘域控制器、功能安全与冗余监控链路。</p>
+        </div>
+        <div class="card" style="border-left:4px solid var(--red)">
+          <h3>边界外</h3>
+          <p>感知 / 决策规划算法、车身内外饰与乘员舱、动力三电与电池能源、车路云协同与交通基础设施；仅通过标准车载接口交互。</p>
+        </div>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="num">3 自由度</div><div class="lab">纵向 / 横向 / 垂向运动控制</div></div>
+      <div class="kpi"><div class="num">6 大子系统</div><div class="lab">转向 · 制动 · 驱动 · 悬架 · 域控 · 安全监控</div></div>
+      <div class="kpi"><div class="num">ASIL-D</div><div class="lab">功能安全目标等级（ISO 26262）</div></div>
+      <div class="kpi"><div class="num">M1–M4</div><div class="lab">全自动 / 远程接管 / MRM / 维保</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 · 作业链路总览 ============ -->
+<section class="slide" data-part="1">
+  <div class="kicker">Part 1 · 开场与项目总览</div>
+  <h2>四份作业的衔接与追溯链路</h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="chain">
+      <div class="step"><div class="t">作业 1</div><div class="d">六层层级分解<br>Mission → Modules<br>定位系统层、补全要素</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="t">作业 2</div><div class="d">BRS / StRS<br>业务需求 · 相关方需求<br>ConOps / OpsCon</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="t">作业 3</div><div class="d">SyRS · 初始架构<br>控制框图 · STPA<br>安全需求与安全架构</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="t">作业 4</div><div class="d">场景分层 · ODC<br>典型场景 · 风险场景列表<br>反向追溯架构与需求</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>需求追溯主线</h3>
+        <p>业务需求 <b>BRS</b> → 相关方需求 <b>StRS</b> → 系统需求 <b>SyRS</b> → 系统架构与设计 → 子系统 / 模块需求；每条需求均可双向追溯到相关方、验证活动与风险场景。</p>
+      </div>
+      <div class="card">
+        <h3>标准依据</h3>
+        <p>ISO/IEC/IEEE 29148:2018 需求工程 · ISO 26262 功能安全 · ISO 21448 SOTIF · ISO/SAE 21434 网络安全 · UN R155/R156 · GB/T 40429 · ISO 34503 ODD。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 · 汇报分工 ============ -->
+<section class="slide" data-part="1">
+  <div class="kicker">Part 1 · 开场与项目总览</div>
+  <h2>本次汇报分工 <span class="sub">六部分 · 六位讲者</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <table>
+      <thead><tr><th style="width:90px">讲者</th><th style="width:200px">部分</th><th>对应作业与核心内容</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag">讲者 1</span></td><td>开场与项目总览</td><td>选题背景、系统定义与边界、四份作业衔接链路、汇报分工</td></tr>
+        <tr><td><span class="tag">讲者 2</span></td><td>六层层级分解</td><td>作业 1：Mission → SoS → Vehicles → Systems → Sub-systems → Modules 要素补全与串联</td></tr>
+        <tr><td><span class="tag">讲者 3</span></td><td>业务需求与运营概念</td><td>作业 2 上：BRS 业务需求规格、业务管理 / 运行需求、ConOps 运营概念</td></tr>
+        <tr><td><span class="tag">讲者 4</span></td><td>相关方需求与运行概念</td><td>作业 2 下：相关方列表与矩阵、StRS 需求条目、运行模式、OpsCon 运行概念</td></tr>
+        <tr><td><span class="tag">讲者 5</span></td><td>系统需求与初始架构</td><td>作业 3 上：SyRS 需求规格、初始架构四视图、系统控制框图、架构权衡</td></tr>
+        <tr><td><span class="tag">讲者 6</span></td><td>安全分析 · 场景与风险 · 总结</td><td>作业 3 下 STPA 安全需求 / 架构；作业 4 场景分层、ODC、典型场景、风险列表与追溯总结</td></tr>
+      </tbody>
+    </table>
+    <div class="note">说明：翻页支持 ← / → 方向键、空格、PageUp / PageDown；右上角「目录」可跳转到任意章节。各页指标为小组作业示例值，最终以整车标定与企业技术规格为准。</div>
+  </div>
+</section>
+
+<!-- ============ 5 · 分隔 Part 2 ============ -->
+<section class="slide divider" data-part="2">
+  <div class="part-no">PART 02 · 小组作业 1</div>
+  <h2>六层层级分解分析</h2>
+  <div class="desc">沿「任务 Mission — 体系 SoS — 整机 Vehicles — 系统 Systems — 子系统 Sub-systems — 模块 Modules」框架，逐层补全要素并串联阐述，明确线控底盘平台在层级中的定位。</div>
+  <div class="chips"><span>层级定位</span><span>要素清单</span><span>上下串联</span></div>
+</section>
+
+<!-- ============ 6 · 六层框架总览 ============ -->
+<section class="slide" data-part="2">
+  <div class="kicker">Part 2 · 作业 1 层级分解</div>
+  <h2>六层框架总览 <span class="sub">本对象位于 Systems 层</span></h2>
+  <div class="title-rule"></div>
+  <div class="body">
+    <div class="svg-box">
+      <svg viewBox="0 0 1160 430" role="img" aria-label="六层分解框架">
+        <defs>
+          <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2b6cb0"/></marker>
+        </defs>
+        <!-- 六层横带 -->
+        <g font-size="15">
+          <rect x="20" y="20" width="1120" height="56" rx="10" fill="#e6f0f8" stroke="#bcd6ea"/>
+          <text x="44" y="44" font-weight="700" fill="#1f4e79">Mission 任务</text>
+          <text x="220" y="44" fill="#334155">城市无人驾驶出行服务：ODD 内为乘客提供门到门、安全舒适的 Robotaxi 运输</text>
+          <text x="44" y="64" font-size="12" fill="#64748b">为什么做 · 达成什么目的</text>
+
+          <rect x="20" y="88" width="1120" height="56" rx="10" fill="#eef4fb" stroke="#c9dcee"/>
+          <text x="44" y="112" font-weight="700" fill="#1f4e79">SoS 体系</text>
+          <text x="220" y="112" fill="#334155">自动驾驶出行运营体系：无人车队 + 云控远程监控 / 接管 · 高精地图与定位 · V2X · 充换电站</text>
+          <text x="44" y="132" font-size="12" fill="#64748b">和谁一起跑 · 多系统协同的大系统</text>
+
+          <rect x="20" y="156" width="1120" height="56" rx="10" fill="#eef4fb" stroke="#c9dcee"/>
+          <text x="44" y="180" font-weight="700" fill="#1f4e79">Vehicles 整机</text>
+          <text x="220" y="180" fill="#334155">L4 自动驾驶整车：感知—决策—线控执行三冗余集成；纯电 SUV / MPV 城配车型</text>
+          <text x="44" y="200" font-size="12" fill="#64748b">装在哪台车上跑 · 载体与集成约束</text>
+
+          <rect x="20" y="224" width="1120" height="62" rx="10" fill="#1f4e79" stroke="#1f4e79"/>
+          <text x="44" y="250" font-weight="800" fill="#fff">Systems 系统（本对象）</text>
+          <text x="220" y="250" fill="#fff">线控底盘平台：接收自动驾驶域控指令，精确、安全、冗余地完成横 / 纵 / 垂向运动控制</text>
+          <text x="44" y="272" font-size="12" fill="#c9dcea">怎么执行运动 · 分析主体</text>
+
+          <rect x="20" y="298" width="1120" height="56" rx="10" fill="#fdf3e3" stroke="#ecd3a8"/>
+          <text x="44" y="322" font-weight="700" fill="#b7791f">Sub-systems 子系统</text>
+          <text x="220" y="322" fill="#334155">SBW 转向 · BBW 制动（EMB+液压冗余）· 线控驱动扭矩矢量 · 主动悬架 · 底盘域控 · 功能安全监控</text>
+          <text x="44" y="342" font-size="12" fill="#64748b">由哪些功能单元执行</text>
+
+          <rect x="20" y="366" width="1120" height="52" rx="10" fill="#f7fafc" stroke="#dbe5ee"/>
+          <text x="44" y="390" font-weight="700" fill="#1f4e79">Modules 模块</text>
+          <text x="220" y="390" fill="#334155">助力电机 / 转角传感器 · EMB 卡钳 / 踏板模拟器 / 压力传感器 · MCU / 减速器 · 空簧 / CDC 阀 · SoC+MCU 硬件 · 双源电源</text>
+          <text x="44" y="410" font-size="12" fill="#64748b">靠哪些元器件与算法落地</text>
+        </g>
+        <!-- 纵向箭头 -->
+        <line x1="580" y1="76" x2="580" y2="86" stroke="#2b6cb0" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="580" y1="144" x2="580" y2="154" stroke="#2b6cb0" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="580" y1="212" x2="580" y2="222" stroke="#2b6cb0" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="580" y1="286" x2="580" y2="296" stroke="#2b6cb0" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="580" y1="354" x2="580" y2="364" stroke="#2b6cb0" stroke-width="2" marker-end="url(#ar)"/>
+      </svg>
+    </div>
+  </div>
+</section>
